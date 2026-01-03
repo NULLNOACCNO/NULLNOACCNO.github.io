@@ -27,18 +27,13 @@ class IntelligenceCommander {
     async executeRequest(systemPrompt, userMessage) {
         let attempts = 0;
         const maxAttempts = KeyArmy.length * ModelArsenal.length;
+        const isApp = window.location.protocol === 'file:' || !window.location.hostname.includes('localhost');
 
         const payload = {
             contents: [{
                 role: "user",
                 parts: [{ text: `${systemPrompt}\n\nUser: ${userMessage}` }]
-            }],
-            generationConfig: {
-                temperature: 0.7,
-                topK: 40,
-                topP: 0.95,
-                maxOutputTokens: 8192
-            }
+            }]
         };
 
         while (attempts < maxAttempts) {
@@ -47,11 +42,23 @@ class IntelligenceCommander {
             const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
 
             try {
-                const response = await fetch(endpoint, {
+                let fetchOptions = {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
+                    headers: { 'Content-Type': 'application/json' }
+                };
+
+                if (isApp) {
+                    // تشفير البيانات لإخفاء الموقع وتمريرها عبر Interceptor التطبيق
+                    const ghostBody = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+                    fetchOptions.headers['X-Ghost-Body'] = ghostBody;
+                } else {
+                    // استخدام بروكسي للـ Localhost لتغيير الموقع
+                    fetchOptions.body = JSON.stringify(payload);
+                    const proxyUrl = "https://corsproxy.io/?" + encodeURIComponent(endpoint);
+                    return await this.performFetch(proxyUrl, fetchOptions);
+                }
+
+                const response = await fetch(endpoint, fetchOptions);
 
                 if (response.status === 429 || response.status === 403) {
                     this.rotateAssets();
@@ -59,34 +66,26 @@ class IntelligenceCommander {
                     continue;
                 }
 
-                if (!response.ok) {
-                    this.rotateAssets();
-                    attempts++;
-                    continue;
-                }
-
                 const data = await response.json();
-                if (data.candidates && data.candidates[0].content) {
-                    return data.candidates[0].content.parts[0].text;
-                } else {
-                    this.rotateAssets();
-                    attempts++;
-                    continue;
-                }
+                return data.candidates[0].content.parts[0].text;
 
             } catch (e) {
                 this.rotateAssets();
                 attempts++;
             }
         }
-        return "ERROR_SYSTEM_LIMIT_REACHED";
+        return "ERROR_LIMIT";
+    }
+
+    async performFetch(url, options) {
+        const res = await fetch(url, options);
+        const data = await res.json();
+        return data.candidates[0].content.parts[0].text;
     }
 
     rotateAssets() {
         this.currentKeyIdx = (this.currentKeyIdx + 1) % KeyArmy.length;
-        if (this.currentKeyIdx === 0) {
-            this.currentModelIdx = (this.currentModelIdx + 1) % ModelArsenal.length;
-        }
+        if (this.currentKeyIdx === 0) this.currentModelIdx = (this.currentModelIdx + 1) % ModelArsenal.length;
     }
 }
 
