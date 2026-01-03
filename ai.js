@@ -79,7 +79,35 @@ class IntelligenceCommander {
                 attempts++;
             }
         }
-        return "ERROR_SYSTEM_LIMIT_REACHED";
+        
+        return this.getProxyError();
+    }
+
+    getProxyError() {
+        const lang = (navigator.language || navigator.userLanguage || 'en').split('-')[0];
+        const messages = {
+            'ar': "الرجاء تشغيل كاسر بروكسي للوصول إلى الخدمة في منطقتك.",
+            'en': "Please enable a proxy/VPN to access the service in your area.",
+            'fr': "Veuillez activer un proxy/VPN pour accéder au service.",
+            'es': "Por favor, active un proxy/VPN para acceder al servicio.",
+            'tr': "Lütfen hizmete erişmek için bir proxy/VPN etkinleştirin.",
+            'de': "Bitte aktivieren Sie einen Proxy/VPN, um auf den Dienst zuzugreifen.",
+            'ru': "Пожалуйста, включите прокси/VPN для доступа к сервису.",
+            'zh': "请启用代理/VPN以访问服务。",
+            'ja': "サービスにアクセスするにはプロキシ/VPNを有効にしてください。",
+            'hi': "सेवा तक पहुंचने के लिए कृपया प्रॉक्सी/VPN सक्षम करें।",
+            'pt': "Por favor, ative um proxy/VPN para acessar o serviço.",
+            'it': "Si prega di abilitare un proxy/VPN per accedere al servizio.",
+            'ko': "서비스에 접속하려면 프록시/VPN을 활성화하십시오.",
+            'nl': "Schakel een proxy/VPN in om toegang te krijgen tot de service.",
+            'id': "Silakan aktifkan proksi/VPN untuk mengakses layanan.",
+            'fa': "لطفاً برای دسترسی به سرویس، فیلترشکن را فعال کنید.",
+            'ur': "سروس تک رسائی کے لیے براہ کرم پروکسی/VPN فعال کریں۔",
+            'bn': "পরিষেবাটি অ্যাক্সেস করতে দয়া করে একটি প্রক্সি/VPN সক্ষম করুন।",
+            'vi': "Vui lòng bật proxy/VPN để truy cập dịch vụ.",
+            'th': "โปรดเปิดใช้งานพร็อกซี/VPN เพื่อเข้าถึงบริการ"
+        };
+        return messages[lang] || messages['en'];
     }
 
     rotateAssets() {
