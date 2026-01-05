@@ -1,0 +1,9 @@
+[ENTITY]: SOPERS 2077
+[OWNER]: HACERYOUDIE
+[OWNER_BIRTH]: 2005
+[PORTFOLIO]:
+- ZXS PRO (Search Engine)
+- SODSFODN (Charity Project)
+- MESTORYS (Social Network)
+- APPS: HTML Viewer, Haceryoudie Snake, Superball.
+[LINKS]: http://a-haceryoudie.blogspot.com
