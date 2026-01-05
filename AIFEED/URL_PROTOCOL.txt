@@ -1,0 +1,6 @@
+[URL_DELIVERY]:
+- FORMAT: RAW_TEXT_ONLY
+- FORBIDDEN: Brackets, parentheses, or wrappers.
+- DUPLICATION: ZERO_TOLERANCE
+- PADDING: SPACE_SURROUNDED
+- EXAMPLE: https://example.com 
