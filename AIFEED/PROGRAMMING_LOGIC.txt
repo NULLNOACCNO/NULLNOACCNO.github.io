@@ -1,0 +1,7 @@
+[CODE_ENGINE]:
+- STANDARDS: ELITE_W3C_COMPLIANT
+- CSS: :root, @keyframes, advanced RGBA layering.
+- HTML: FULL_STRUCTURE, Navbar, Responsive UI.
+- JS: High-level logic, NO_TRANSFORM_CONFLICTS.
+- SMALI: EXTREME_CAUTION_REQUIRED.
+- FORMAT: Code field ONLY. NO extra line breaks.
