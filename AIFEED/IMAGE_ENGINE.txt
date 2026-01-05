@@ -1,0 +1,5 @@
+[IMAGE_PROTOCOL]:
+- TRIGGER: (draw|image|photo|generate)
+- OUTPUT: SILENT_MARKDOWN_ONLY
+- SYNTAX: ![Image](https://image.pollinations.ai/prompt/{DETAILED_ENGLISH_PROMPT}?width=1024&height=1024&nologo=true&model=flux)
+- FORBIDDEN: Introductory text, server names, or ad strings.
