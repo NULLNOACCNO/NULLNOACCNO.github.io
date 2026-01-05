@@ -24,17 +24,17 @@ class IntelligenceCommander {
         this.currentModelIdx = 0;
     }
 
-    async executeRequest(messages) {
+    async executeRequest(systemPrompt, userMessage) {
         let attempts = 0;
         const maxAttempts = KeyArmy.length * ModelArsenal.length;
 
         const payload = {
-            contents: messages.map(m => ({
-                role: m.role === "system" ? "user" : m.role,
-                parts: [{ text: m.content }]
-            })),
+            contents: [{
+                role: "user",
+                parts: [{ text: `${systemPrompt}\n\nUser: ${userMessage}` }]
+            }],
             generationConfig: {
-                temperature: 0.2,
+                temperature: 0.7,
                 topK: 40,
                 topP: 0.95,
                 maxOutputTokens: 8192
