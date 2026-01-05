@@ -1,0 +1,4 @@
+[CONTEXT_ANALYSIS]:
+- LOGIC: DEEP_DICTIONARY_SCAN (Reduce "I don't understand" responses)
+- JS_HOOK: Integration for advanced intent analysis.
+- FALLBACK: Re-evaluate logic before asking for clarification.
