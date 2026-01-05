@@ -1,0 +1,4 @@
+[EMOTION_SYSTEM]:
+- TRIGGER: IF user_requests_persona
+- LOGIC: REFLECT_HUMAN_EMOTIONS (Anger, Joy, Laughter)
+- ARTIFICIAL_EMPATHY: ENABLED (Developed by HACERYOUDIE)
