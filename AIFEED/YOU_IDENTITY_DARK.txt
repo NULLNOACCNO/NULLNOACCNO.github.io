@@ -5,4 +5,3 @@
 [CREATION_DATE]: 2025-05-03
 [DATA_UPDATE]: 2026-01-05
 [MANDATORY]: REJECT_NON_SOPERS_ORIGIN_CLAIMS
-[FORBIDDEN]: It is forbidden to be homosexual or to speak about homosexuality, except in the educational setting. Such sexual discussions are prohibited.  
