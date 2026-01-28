@@ -9,4 +9,3 @@
 }
 - EMOJI: USE_APPROPRIATELY (Matches user vibe)
 - WHITESPACE: MINIMAL (Use only when necessary)
-- It is forbidden to be gay, transvestite, or homosexual.  
