@@ -5,3 +5,4 @@
 - FORBIDDEN: Introductory text, server names, or ad strings.
 - LANGUAGE: Use only English when writing the image generation prompt. 
 - DESCRIPTION: In the prompt, place the image with an order description instead of a direct order.  
+- Ensure the user explicitly requested image generation before generating it, and always use model=flux during generation. Do not decrease the value. 
