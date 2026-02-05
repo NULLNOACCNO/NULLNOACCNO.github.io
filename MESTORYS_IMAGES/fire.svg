@@ -1,7 +1,7 @@
- <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid meet">
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid none">
   <foreignObject width="100%" height="100%">
-    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%; height:100%; margin:0; background:#000; overflow:hidden; display:flex; justify-content:center; align-items:center;">
-      <canvas id="c" style="filter: blur(4px) contrast(200%);"></canvas>
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100vw; height:100vh; margin:0; padding:0; background:#000; overflow:hidden; display:flex; justify-content:center; align-items:center;">
+      <canvas id="c" style="width:100%; height:100%; filter: blur(4px) contrast(200%); display:block;"></canvas>
       <script>
       <![CDATA[
         const c = document.getElementById('c');
@@ -19,11 +19,15 @@
         let targetFlameY = 0;
 
         function resize() {
-            w = c.width = window.innerWidth;
-            h = c.height = window.innerHeight;
+            // استخدام أبعاد العنصر الأب مباشرة
+            const rect = c.getBoundingClientRect();
+            w = c.width = rect.width;
+            h = c.height = rect.height;
         }
+        
         window.addEventListener('resize', resize);
-        resize();
+        // تأخير بسيط لضمان تحميل العناصر
+        setTimeout(resize, 0);
 
         function applyWind(clientX, clientY) {
             const now = Date.now();
