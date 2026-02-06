@@ -1,16 +1,25 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" style="background:transparent;">
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid meet">
   <foreignObject width="100%" height="100%">
-    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%; height:100%; background:transparent; display:flex; justify-content:center; align-items:center; overflow:hidden;">      
-      <canvas id="c" style="filter: blur(5px) contrast(200%); background:transparent; transform: scale(1.8); transform-origin: center center;"></canvas>
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%; height:100%; margin:0; background:transparent; overflow:hidden; display:flex; justify-content:center; align-items:center;">
+      <canvas id="c" style="filter: blur(4px) contrast(100%);"></canvas>
       <script>
       <![CDATA[
         const c = document.getElementById('c');
         const ctx = c.getContext('2d');
         let w, h;
         const particles = [];
-        let windX = 0, windY = 0, windTime = 0, lastInteractionTime = 0;
-        let flameOffsetX = 0, flameOffsetY = 0, targetFlameX = 0, targetFlameY = 0;
-        let tiltX = 0, tiltY = 0;
+        let windX = 0;
+        let windY = 0;
+        let windTime = 0;
+        let lastInteractionTime = 0;
+        
+        let flameOffsetX = 0;
+        let flameOffsetY = 0;
+        let targetFlameX = 0;
+        let targetFlameY = 0;
+        
+        let tiltX = 0;
+        let tiltY = 0;
 
         function resize() {
             w = c.width = window.innerWidth;
@@ -21,10 +30,14 @@
 
         function applyWind(clientX, clientY) {
             const now = Date.now();
-            if (now - lastInteractionTime > 1000) windTime = 15;
+            if (now - lastInteractionTime > 1000) {
+                windTime = 15;
+            }
             lastInteractionTime = now;
+            
             windX = (clientX - w/2) * 0.003;
             windY = (clientY - h/2) * 0.002;
+            
             if (windTime > 0) {
                 targetFlameX = (clientX - w/2) * 0.02;
                 targetFlameY = (clientY - h/2) * 0.015;
@@ -36,11 +49,11 @@
             windTime = 15;
             applyWind(e.touches[0].clientX, e.touches[0].clientY);
             e.preventDefault();
-        }, {passive: false});
+        });
         c.addEventListener('touchmove', (e) => {
             applyWind(e.touches[0].clientX, e.touches[0].clientY);
             e.preventDefault();
-        }, {passive: false});
+        });
         c.addEventListener('touchend', (e) => {
             windTime = 0;
             e.preventDefault();
@@ -53,109 +66,193 @@
         c.addEventListener('mousemove', (e) => {
             if (e.buttons === 1) applyWind(e.clientX, e.clientY);
         });
-        c.addEventListener('mouseup', () => { windTime = 0; });
+        c.addEventListener('mouseup', (e) => {
+            windTime = 0;
+        });
 
         if (window.DeviceOrientationEvent) {
             window.addEventListener('deviceorientation', (e) => {
-                if (e.gamma === null || e.beta === null) return;
-                let gamma = e.gamma, beta = e.beta, tolerance = 8, deadzone = 5, effectiveGamma = 0;
-                if (Math.abs(beta) < deadzone && Math.abs(gamma) < deadzone) return;
-                if (Math.abs(gamma) > tolerance) effectiveGamma = gamma > 0 ? gamma - tolerance : gamma + tolerance;
+                if (e.gamma === null || e.beta === null || e.alpha === null) {
+                    return;
+                }
+
+                let gamma = e.gamma || 0;
+                let beta = e.beta || 0;
+                let tolerance = 8;
+                let deadzone = 5;
+                let effectiveGamma = 0;
+
+                if (Math.abs(beta) < deadzone && Math.abs(gamma) < deadzone) {
+                    return;
+                }
+
+                if (Math.abs(gamma) > tolerance) {
+                    effectiveGamma = gamma > 0 ? gamma - tolerance : gamma + tolerance;
+                } else {
+                    effectiveGamma = 0;
+                }
+
                 let multiplier = (Math.abs(beta) <= 90) ? -1 : 1;
+
                 let targetX = effectiveGamma * 0.1 * multiplier;
+                
                 tiltX += (targetX - tiltX) * 0.4;
                 tiltY = beta * 0.1;
             });
         }
 
         class P {
-            constructor() { this.reset(); }
+            constructor() {
+                this.reset();
+            }
+            
             reset() {
                 this.x = w / 2;
-                this.y = h / 2 + 50;
-                this.vx = (Math.random() - 0.5) * 2;
-                this.vy = (Math.random() * -2) - 1;
+                this.y = h / 2 + 100;
+                this.vx = (Math.random() - 0.5) * 1.5;
+                this.vy = (Math.random() * -1.5) - 0.5;
                 this.life = 1.0;
-                this.decay = (Math.random() * 0.02) + 0.01;
-                this.size = (Math.random() * 20) + 20;
+                this.decay = (Math.random() * 0.015) + 0.005;
+                this.size = (Math.random() * 15) + 15;
+                this.turb = Math.random() * 0.1;
             }
+            
             update() {
                 this.life -= this.decay;
-                if (this.life <= 0) { this.reset(); return; }
+                
+                if (this.life <= 0 || this.size <= 0.5) {
+                    this.reset();
+                    return;
+                }
+
                 let t = Date.now() * 0.002;
                 let noise = Math.sin(this.y * 0.01 + t) * Math.cos(this.x * 0.01 + t);
+                
                 this.x += this.vx + (noise * 0.5);
                 this.y += this.vy;
+                
                 if (windTime > 0) {
                     this.vx += windX * 0.15;
                     this.vy += windY * 0.1;
                 }
+                
                 this.vx += (w/2 - this.x) * 0.002;
-                this.size *= 0.96;
+                
+                this.size *= 0.97;
             }
+            
             draw() {
                 ctx.beginPath();
                 let g = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
-                let r = Math.floor(255 * this.life), gr = Math.floor(140 * this.life), b = Math.floor(50 * this.life * this.life);
-                g.addColorStop(0, `rgba(255, 255, 255, ${this.life})`); 
-                g.addColorStop(0.4, `rgba(255, 255, 200, ${this.life})`);
-                g.addColorStop(0.7, `rgba(255, 150, 0, ${this.life})`);  
-                g.addColorStop(1, `rgba(${r}, ${gr}, ${b}, 0)`); 
+                
+                let r = Math.floor(255 * this.life);
+                let gr = Math.floor(140 * this.life); 
+                let b = Math.floor(50 * this.life * this.life);
+                let a = this.life;
+                
+                g.addColorStop(0, `rgba(255, 255, 255, ${a})`); 
+                g.addColorStop(0.4, `rgba(255, 255, 230, ${a})`);
+                g.addColorStop(0.7, `rgba(255, 180, 0, ${a})`);  
+                g.addColorStop(0.85, `rgba(${r}, ${gr}, ${b}, ${a})`); 
+                g.addColorStop(1, `rgba(50, 20, 0, 0)`); 
+                
                 ctx.fillStyle = g;
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fill();
             }
         }
 
-        for(let i=0; i<150; i++) particles.push(new P());
+        for(let i=0; i<300; i++) particles.push(new P());
 
         function getBaseInfo() {
             let t = Date.now() * 0.002;
-            const by = h / 2 + 80 + Math.cos(t * 3) * 1;
-            const bx = w / 2 + Math.sin(t * 2.5) * 1.5;
-            const size = 30 + Math.sin(t * 1) * 2; 
+            let noiseX = Math.sin(t * 2.5) * 1.5;
+            let noiseY = Math.cos(t * 3.0) * 1.0;
+
+            const by = h / 2 + 135 + noiseY;
+            const bx = w / 2 + noiseX;
+            const size = 25 + Math.sin(t * 1) * 1.5; 
+            
             return { bx, by, size };
         }
 
         function drawBase(bx, by, size) {
             ctx.beginPath();
             let g = ctx.createLinearGradient(bx, by - size, bx, by + size);
-            g.addColorStop(0, 'rgba(255, 255, 255, 1)');
-            g.addColorStop(0.4, 'rgba(255, 200, 50, 0.8)');
-            g.addColorStop(1, 'rgba(255, 100, 0, 0)');
+            
+            g.addColorStop(0.0, 'rgba(255, 255, 255, 1)');
+            g.addColorStop(0.2, 'rgba(255, 255, 255, 1)');
+            g.addColorStop(0.2, 'rgba(255, 200, 100, 0.9)');
+            g.addColorStop(0.6, 'rgba(255, 200, 100, 0.9)');
+            g.addColorStop(0.4, 'rgba(255, 140, 0, 1)');
+            g.addColorStop(1, 'rgba(255, 140, 0, 1)');
+            g.addColorStop(1, 'rgba(0, 130, 255, 0.9)');
+            g.addColorStop(1.0, 'rgba(0, 130, 255, 0.9)');
+
             ctx.fillStyle = g;
-            ctx.ellipse(bx, by, size, size * 1.8, 0, 0, Math.PI * 2);
+            ctx.ellipse(bx, by, size * 1, size * 2.0, 0, 0, Math.PI * 2);
             ctx.fill();
         }
 
         function drawWick(bx, by, baseSize) {
+            const wickWidth = baseSize * 0.40; 
+            const wickHeight = baseSize * 0.8; 
+            const wickCenterX = bx;
+            const wickCenterY = (by + baseSize) - wickHeight + 28;
+
             ctx.beginPath();
-            ctx.ellipse(bx, by + baseSize + 5, baseSize * 0.3, baseSize * 0.6, 0, 0, Math.PI * 2);
+            ctx.ellipse(wickCenterX, wickCenterY, wickWidth, wickHeight, 0, 0, Math.PI * 2);
             ctx.fillStyle = '#000000'; 
             ctx.fill();
         }
 
         function anim() {
-            ctx.clearRect(0, 0, w, h);
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+            ctx.fillRect(0, 0, w, h);
+            
             flameOffsetX += (targetFlameX - flameOffsetX) * 0.6;
             flameOffsetY += (targetFlameY - flameOffsetY) * 0.6;
+            
             const baseInfo = getBaseInfo();
             ctx.save();
-            const pivotX = baseInfo.bx, pivotY = baseInfo.by + 20;
+
+            const pivotX = baseInfo.bx;
+            const pivotY = baseInfo.by + 30;
             ctx.translate(pivotX, pivotY); 
-            let skew = Math.max(-0.8, Math.min(0.8, -tiltX * 0.4)); 
-            ctx.transform(1 + Math.abs(skew) * 0.2, 0, skew, 1 + Math.abs(skew) * 0.1, 0, 0); 
+            
+            let rawSkew = -tiltX * 0.4;
+            let lockedSkew = Math.max(-0.8, Math.min(0.8, rawSkew)); 
+            
+            let intensity = Math.abs(lockedSkew);
+            let stretch = 1 + (intensity * 0.1);
+            let wide = 1 + (intensity * 0.2);
+
+            ctx.transform(wide, 0, lockedSkew, 1, 0, 0); 
+            ctx.scale(1, stretch); 
+
             ctx.translate(-pivotX, -pivotY);
+
             drawBase(baseInfo.bx, baseInfo.by, baseInfo.size);
+
             ctx.globalCompositeOperation = 'lighter';
+            ctx.globalAlpha = 0.1;
             ctx.save();
             ctx.translate(flameOffsetX, flameOffsetY);
-            for(let p of particles) { p.update(); p.draw(); }
+            for(let p of particles) { 
+                p.update(); 
+                p.draw(); 
+            }
             ctx.restore();
+
             ctx.globalCompositeOperation = 'source-over';
+            ctx.globalAlpha = 1.0;
             drawWick(baseInfo.bx, baseInfo.by, baseInfo.size);
+
             ctx.restore();
+
             if (windTime > 0) windTime--;
+            
             requestAnimationFrame(anim);
         }
         anim();
