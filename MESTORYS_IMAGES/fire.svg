@@ -17,6 +17,9 @@
         let flameOffsetY = 0;
         let targetFlameX = 0;
         let targetFlameY = 0;
+        
+        let tiltX = 0;
+        let tiltY = 0;
 
         function resize() {
             w = c.width = window.innerWidth;
@@ -66,6 +69,37 @@
         c.addEventListener('mouseup', (e) => {
             windTime = 0;
         });
+
+        if (window.DeviceOrientationEvent) {
+            window.addEventListener('deviceorientation', (e) => {
+                if (e.gamma === null || e.beta === null || e.alpha === null) {
+                    return;
+                }
+
+                let gamma = e.gamma || 0;
+                let beta = e.beta || 0;
+                let tolerance = 8;
+                let deadzone = 5;
+                let effectiveGamma = 0;
+
+                if (Math.abs(beta) < deadzone && Math.abs(gamma) < deadzone) {
+                    return;
+                }
+
+                if (Math.abs(gamma) > tolerance) {
+                    effectiveGamma = gamma > 0 ? gamma - tolerance : gamma + tolerance;
+                } else {
+                    effectiveGamma = 0;
+                }
+
+                let multiplier = (Math.abs(beta) <= 90) ? -1 : 1;
+
+                let targetX = effectiveGamma * 0.1 * multiplier;
+                
+                tiltX += (targetX - tiltX) * 0.4;
+                tiltY = beta * 0.1;
+            });
+        }
 
         class P {
             constructor() {
@@ -135,8 +169,8 @@
             let noiseX = Math.sin(t * 2.5) * 1.5;
             let noiseY = Math.cos(t * 3.0) * 1.0;
 
-            const bx = w / 2 + noiseX;
             const by = h / 2 + 135 + noiseY;
+            const bx = w / 2 + noiseX;
             const size = 25 + Math.sin(t * 1) * 1.5; 
             
             return { bx, by, size };
@@ -181,26 +215,42 @@
             flameOffsetY += (targetFlameY - flameOffsetY) * 0.6;
             
             const baseInfo = getBaseInfo();
+            ctx.save();
+
+            const pivotX = baseInfo.bx;
+            const pivotY = baseInfo.by + 30;
+            ctx.translate(pivotX, pivotY); 
             
+            let rawSkew = -tiltX * 0.4;
+            let lockedSkew = Math.max(-0.8, Math.min(0.8, rawSkew)); 
+            
+            let intensity = Math.abs(lockedSkew);
+            let stretch = 1 + (intensity * 0.1);
+            let wide = 1 + (intensity * 0.2);
+
+            ctx.transform(wide, 0, lockedSkew, 1, 0, 0); 
+            ctx.scale(1, stretch); 
+
+            ctx.translate(-pivotX, -pivotY);
+
             drawBase(baseInfo.bx, baseInfo.by, baseInfo.size);
 
             ctx.globalCompositeOperation = 'lighter';
             ctx.globalAlpha = 0.1;
-            
             ctx.save();
             ctx.translate(flameOffsetX, flameOffsetY);
-            
-            for(let p of particles) {
-                p.update();
-                p.draw();
+            for(let p of particles) { 
+                p.update(); 
+                p.draw(); 
             }
-            
             ctx.restore();
 
             ctx.globalCompositeOperation = 'source-over';
             ctx.globalAlpha = 1.0;
             drawWick(baseInfo.bx, baseInfo.by, baseInfo.size);
-            
+
+            ctx.restore();
+
             if (windTime > 0) windTime--;
             
             requestAnimationFrame(anim);
