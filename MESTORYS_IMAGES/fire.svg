@@ -108,7 +108,7 @@
             
             reset() {
                 this.x = w / 2;
-                this.y = h / 2 + 100;
+                this.y = h / 2 + 15;
                 this.vx = (Math.random() - 0.5) * 1.5;
                 this.vy = (Math.random() * -1.5) - 0.5;
                 this.life = 1.0;
@@ -169,7 +169,7 @@
             let noiseX = Math.sin(t * 2.5) * 1.5;
             let noiseY = Math.cos(t * 3.0) * 1.0;
 
-            const by = h / 2 + 135 + noiseY;
+            const by = h / 2 + 25 + noiseY;
             const bx = w / 2 + noiseX;
             const size = 25 + Math.sin(t * 1) * 1.5; 
             
