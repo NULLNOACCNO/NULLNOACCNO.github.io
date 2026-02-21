@@ -1,1 +1,434 @@
- 
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>لعبة هكريوداي الطيارة الحربية</title>
+    <style>
+         body { margin: 0; overflow: hidden; background: #000; -webkit-user-select: none; user-select: none; }
+        canvas { display: block; position: fixed; top: 0; left: 0; z-index: 1; }
+        @keyframes shake { 0%, 100% { transform: translate(0, 0); } 25% { transform: translate(-5px, -5px); } 75% { transform: translate(5px, 5px); } }
+        #ui-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 3; }
+        .touch-zone { position: absolute; bottom: 0; width: 50%; height: 100%; pointer-events: auto; }
+        #right-zone { right: 0; }
+        #left-zone { left: 0; }
+        .action-button { position: absolute; width: 60px; height: 60px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.7); background: rgba(0,0,0,0.4); pointer-events: auto; display: flex; justify-content: center; align-items: center; color: white; font-family: monospace; font-size: 14px; text-shadow: 1px 1px 2px black; }
+        #fire-button { bottom: calc(10% + 70px); right: 20px; }
+        #camera-button { bottom: 10%; right: 20px; }#plane-container { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 180px; height: 180px; pointer-events: none; display: block; z-index: 2; }
+        #plane-image { width: 100%; height: 100%; image-rendering: pixelated; filter: drop-shadow(0 0 5px rgba(0,0,0,0.5)); transition: transform 0.1s linear; }
+        #cockpit-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: url('https://haceryoudie.github.io/bOf8jrVT9FnGNi2HVDYODSq6WVvlXK/بدون%20اسم9_20251112180917.png'); background-size: cover; background-position: center; pointer-events: none; display: none; z-index: 2; }
+        #hud {
+            position: fixed;
+            top: 15px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            font-family: monospace;
+            font-size: 18px;
+            text-shadow: 2px 2px 4px black;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+        .hud-item {
+            background: rgba(0,0,0,0.5);
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: 1px solid;
+            white-space: nowrap;
+        }
+        .hud-column {
+            display: contents;
+        }
+        #health-display { color: #f00; border-color: #f00; font-size: 22px;}
+        #score-display { color: #FFD700; border-color: #FFD700;}
+        #ammo-display { color: #f0f; border-color: #f0f;}
+        .game-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); color: white; font-family: monospace; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10; text-align: center; padding: 20px; }
+        .game-screen h1 { font-size: 36px; text-shadow: 3px 3px 10px #f0f; }
+        .game-screen h2 { font-size: 24px; color: #FFD700; }
+        .game-screen button { font-size: 28px; font-family: monospace; color: white; background: #f0f; border: 2px solid white; border-radius: 10px; padding: 15px 40px; cursor: pointer; box-shadow: 0 0 20px #f0f; margin-top: 20px; }
+        #game-over-screen button { background: #f00; box-shadow: 0 0 20px #f00; }
+        #game-ui { display: none; }
+    </style>
+</head>
+<body>
+    <canvas id="game-canvas"></canvas>
+    <div id="game-ui">
+        <div id="cockpit-container"></div>
+        <div id="ui-layer">
+            <div id="right-zone" class="touch-zone"></div>
+            <div id="left-zone" class="touch-zone"></div>
+            <div id="fire-button" class="action-button">FIRE</div>
+            <div id="camera-button" class="action-button">CAM</div>
+            <div id="plane-container"><img id="plane-image" src="https://haceryoudie.github.io/QaEI9szdVmJLsft0eBRcdWzOF7SZde/sketch-1762960946505.png" alt="Jet Fighter"></div>
+            <div id="hud">
+                <div class="hud-column"><div id="health-display" class="hud-item"></div></div>
+                <div class="hud-column">
+                    <div id="score-display" class="hud-item"></div>
+                    <div id="speed-display" class="hud-item"></div>
+                </div>
+                <div class="hud-column"><div id="ammo-display" class="hud-item"></div></div>
+            </div>
+        </div>
+    </div>
+    <div id="start-screen" class="game-screen">
+        <h1>القتال الجوي</h1>
+        <h2 id="start-high-score"></h2>
+        <button id="play-button">إبدأ</button>
+    </div>
+    <div id="game-over-screen" class="game-screen" style="display: none;">
+        <h1>انتهت اللعبة</h1>
+        <h2 id="final-score"></h2>
+        <h2 id="final-high-score"></h2>
+        <button id="restart-button">محاولة أخرى</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.9.0/nipplejs.min.js"></script>
+
+    <script>
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x87CEEB);
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 20000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('game-canvas'), antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        scene.fog = new THREE.Fog(0x87CEEB, 100, 8000);
+        scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+        const sun = new THREE.DirectionalLight(0xffffff, 0.8);
+        sun.position.set(100, 100, 50);
+        scene.add(sun);
+        
+        const groundMaterial = new THREE.MeshLambertMaterial({ color: 0x806040 });
+        const runwayMaterial = new THREE.MeshLambertMaterial({ color: 0x444444 });
+
+        function createRepeatingTextureFromURL(url, onLoadCallback, isRepeating = true) {
+             const img = new Image(); img.crossOrigin = 'Anonymous';
+             img.onload = function() {
+                 const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+                 if (isRepeating) { const size = 1024; canvas.width = size; canvas.height = size; ctx.drawImage(this, 0, 0, size, size); } 
+                 else { canvas.width = this.width; canvas.height = this.height; ctx.drawImage(this, 0, 0); }
+                 const texture = new THREE.CanvasTexture(canvas);
+                 if (isRepeating) { texture.wrapS = THREE.RepeatWrapping; texture.wrapT = THREE.RepeatWrapping; }
+                 onLoadCallback(texture);
+             };
+             img.src = url;
+        }
+        createRepeatingTextureFromURL('https://haceryoudie.github.io/YLyBBtgRMp5YkQ0GyOqr17SZhWYAap/sketch-1762972386418.png', (texture) => {
+            texture.repeat.set(100, 100); groundMaterial.map = texture; groundMaterial.needsUpdate = true;
+        });
+        createRepeatingTextureFromURL('https://haceryoudie.github.io/tJhnLb7cVuNalifgAqnQjFVKhjPK5p/sketch-1762972402805.png', (texture) => {
+            runwayMaterial.map = texture; runwayMaterial.needsUpdate = true;
+        }, false);
+        
+        const ground = new THREE.Mesh(new THREE.PlaneGeometry(40000, 40000), groundMaterial);
+        ground.rotation.x = -Math.PI / 2;
+        scene.add(ground);
+        const runway = new THREE.Mesh(new THREE.PlaneGeometry(80, 1000), runwayMaterial);
+        runway.rotation.x = -Math.PI / 2; runway.position.y = 1.0; scene.add(runway);
+
+        const buildings = [];
+        for (let i = 0; i < 200; i++) { const h = Math.random() * 300 + 50; const building = new THREE.Mesh(new THREE.BoxGeometry(Math.random() * 60 + 30, h, Math.random() * 60 + 30), new THREE.MeshStandardMaterial({ color: Math.random() * 0x888888 + 0x222222 })); building.position.set((Math.random() - 0.5) * 8000, h / 2, (Math.random() - 0.5) * 8000); building.userData.BBox = new THREE.Box3().setFromObject(building); if(Math.abs(building.position.x) < 200 && Math.abs(building.position.z) < 800) continue; buildings.push(building); scene.add(building); }
+
+        const jet = new THREE.Object3D();
+        let isThirdPerson = true;
+        let visualRoll = 0;
+        let visualSpeed = 0;
+        const player = { speed: 0, health: 3, maxHealth: 3, ammo: 50, maxAmmo: 999, lastCollisionTime: 0, score: 0 };
+        let gameState = 'START_SCREEN';
+        
+        const controls = { right: { x: 0, y: 0 }, left: { y: 0 } };
+        const smoothedControls = { right: { x: 0, y: 0 }, left: { y: 0 } };
+
+        nipplejs.create({
+            zone: document.getElementById('right-zone'),
+            mode: 'dynamic',
+            color: 'white'
+        }).on('move', (evt, data) => {
+            controls.right.x = data.vector.x;
+            controls.right.y = data.vector.y;
+        }).on('end', () => {
+            controls.right.x = 0;
+            controls.right.y = 0;
+        });
+
+        nipplejs.create({
+            zone: document.getElementById('left-zone'),
+            mode: 'dynamic',
+            color: 'white'
+        }).on('move', (evt, data) => {
+            controls.left.x = data.vector.x;
+            controls.left.y = data.vector.y;
+        }).on('end', () => {
+            controls.left.x = 0;
+            controls.left.y = 0;
+        });
+
+        function initGame() {
+            player.health = 3; player.ammo = 50; player.speed = 0; player.score = 0; visualRoll = 0;
+            visualSpeed = 0; 
+            jet.position.set(0, 1.8, -450); jet.rotation.set(0,0,0);
+            enemies.forEach(e => scene.remove(e.mesh)); enemies.length = 0;
+            [...collectibles.stars, ...collectibles.hearts].forEach(c => scene.remove(c));
+            collectibles.stars.length = 0; collectibles.hearts.length = 0;
+            spawnTimer = 5000;
+            updateHUD();
+        }
+        
+        const planeContainer = document.getElementById('plane-container');
+        const cockpitContainer = document.getElementById('cockpit-container');
+        function updateHUD(){
+            visualSpeed = THREE.MathUtils.lerp(visualSpeed, player.speed, 0.0009);
+            document.getElementById('speed-display').textContent = `${Math.round(visualSpeed * 3.6)} KM/H`;
+            document.getElementById('ammo-display').textContent = `ذخيرة: ${player.ammo}`;
+            document.getElementById('health-display').textContent = '❤️'.repeat(player.health);
+            document.getElementById('score-display').textContent = `النقاط: ${player.score}`;    }
+
+        const clock = new THREE.Clock();
+        const MAX_SPEED = 340; // ~1200 KM/H
+        const SPEED_MULTIPLIER = 10.0; 
+        const MIN_SPEED = 0.0;
+        
+        function handlePlayerMovement(deltaTime) {
+            smoothedControls.right.x = THREE.MathUtils.lerp(smoothedControls.right.x, controls.right.x, 0.1);
+            smoothedControls.right.y = THREE.MathUtils.lerp(smoothedControls.right.y, controls.right.y, 0.1);
+            smoothedControls.left.y = THREE.MathUtils.lerp(smoothedControls.left.y, controls.left.y, 0.1);
+
+            if (smoothedControls.right.y > 0.1) {
+                player.speed += smoothedControls.right.y * 50.0 * deltaTime;
+            } else if (smoothedControls.right.y < -0.1) {
+                if (player.speed > 0) {
+                    player.speed -= 250.0 * deltaTime;
+                } else {
+                    player.speed = -5.0;
+                }
+            } else {
+                player.speed *= 0.94;
+            }
+            
+            player.speed = Math.max(-5.0, Math.min(player.speed, MAX_SPEED));
+            if (Math.abs(player.speed) < 0.1) player.speed = 0;
+
+            const forward = new THREE.Vector3(0, 0, 1);
+            jet.getWorldDirection(forward);
+            
+            jet.position.add(forward.multiplyScalar(visualSpeed * SPEED_MULTIPLIER * deltaTime));
+
+            const yawSpeed = 1.0;
+            const pitchSpeed = 1.2;
+
+            const yawQuat = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), -smoothedControls.right.x * yawSpeed * deltaTime);
+            jet.quaternion.multiplyQuaternions(yawQuat, jet.quaternion);
+
+            if (visualSpeed * 3.6 > 25) {
+                 const pitchQuat = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), smoothedControls.left.y * pitchSpeed * deltaTime);
+                 jet.quaternion.multiply(pitchQuat);
+            }
+
+          if (player.speed < 30 && jet.position.y > 1.8 && Math.abs(smoothedControls.left.y) < 0.1) {
+                const descentRate = (30 - player.speed) * 0.8;
+                jet.position.y -= descentRate * deltaTime;
+            }
+            
+            if (jet.position.y < 1.8) { 
+                jet.position.y = 1.8;
+                if (player.speed > 50 && Date.now() - player.lastCollisionTime > 1000) {
+                     player.health--;
+                     playSound('explosion');
+                     player.lastCollisionTime = Date.now();
+                }
+                
+                if (player.speed < 1) {
+                    const euler = new THREE.Euler().setFromQuaternion(jet.quaternion, 'YXZ');
+                    const targetQuaternion = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), euler.y);
+                    jet.quaternion.slerp(targetQuaternion, 0.05);
+                }
+            }
+        }
+
+        let audioCtx; function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+        function playSound(type) { if (!audioCtx) return; const o = audioCtx.createOscillator(), g = audioCtx.createGain(); o.connect(g).connect(audioCtx.destination); if (type === 'shoot') { g.gain.setValueAtTime(0.2, audioCtx.currentTime); o.type = 'sawtooth'; o.frequency.setValueAtTime(800, audioCtx.currentTime); o.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.3); } else if (type === 'explosion') { g.gain.setValueAtTime(0.8, audioCtx.currentTime); o.type = 'noise'; o.frequency.setValueAtTime(200, audioCtx.currentTime); o.frequency.exponentialRampToValueAtTime(1, audioCtx.currentTime + 0.8);} else if (type === 'collect') { g.gain.setValueAtTime(0.4, audioCtx.currentTime); o.type = 'sine'; o.frequency.setValueAtTime(600, audioCtx.currentTime); o.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.2); } o.start(); o.stop(audioCtx.currentTime + 0.8); }
+        
+        const playerBullets = [];
+        const bulletGeometry = new THREE.SphereGeometry(0.8, 8, 8);
+        const bulletMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+        for (let i = 0; i < 20; i++) {
+            const bullet = new THREE.Mesh(bulletGeometry, bulletMaterial.clone());
+            bullet.visible = false;
+            bullet.userData = { active: false, velocity: new THREE.Vector3(), lifetime: 0 };
+            playerBullets.push(bullet);
+            scene.add(bullet);
+        }
+
+        function fireBullet(isPlayer) {
+            if (!isPlayer) return;
+            if (player.ammo <= 0) return;
+            const bullet = playerBullets.find(b => !b.userData.active);
+            if (bullet) {
+                player.ammo--;
+                bullet.userData.active = true;
+                bullet.visible = true;
+                bullet.scale.set(1, 1, 5);
+
+                const forward = new THREE.Vector3();
+                jet.getWorldDirection(forward);
+
+                bullet.position.copy(jet.position).add(forward.clone().multiplyScalar(5));
+                
+                bullet.userData.velocity.copy(forward).multiplyScalar((visualSpeed * SPEED_MULTIPLIER) + 2000);
+                
+                bullet.userData.lifetime = 3;
+                playSound('shoot');
+            }
+        }
+        
+        const fireButton = document.getElementById('fire-button');
+        const handleFire = (e) => {
+            e.preventDefault();
+            if(gameState !== 'PLAYING') return;
+            fireBullet(true);
+        };
+        fireButton.addEventListener('touchstart', handleFire);
+        fireButton.addEventListener('mousedown', handleFire);
+
+        const enemies = [];
+        let spawnTimer = 5000;
+        const enemyMaterial = new THREE.MeshStandardMaterial({ color: 0x4d5656, roughness: 0.6 });
+        const enemyAccentMaterial = new THREE.MeshStandardMaterial({ color: 0x960018, roughness: 0.6 });
+        function spawnEnemy() {
+            const group = new THREE.Group();
+            const fuselage = new THREE.Mesh(new THREE.CylinderGeometry(1, 2, 15, 8), enemyMaterial);
+            fuselage.rotation.x = Math.PI / 2;
+            const mainWings = new THREE.Mesh(new THREE.BoxGeometry(20, 1, 4), enemyMaterial);
+            mainWings.position.z = -1;
+            const tailWing = new THREE.Mesh(new THREE.BoxGeometry(8, 1, 3), enemyMaterial);
+            tailWing.position.z = -6;
+            const cockpit = new THREE.Mesh(new THREE.SphereGeometry(2, 8, 8, 0, Math.PI * 2, 0, Math.PI / 2), enemyAccentMaterial);
+            cockpit.position.z = 4;
+            group.add(fuselage, mainWings, tailWing, cockpit);
+            group.scale.set(1.5, 1.5, 1.5);
+            group.position.copy(jet.position).add(new THREE.Vector3(Math.random() * 2000 - 1000, Math.random() * 500, 3000).applyQuaternion(jet.quaternion));
+            enemies.push({ mesh: group, health: 3, lastShot: 0 });
+            scene.add(group);
+        }
+        
+        const collectibles = { stars: [], hearts: [] };
+        const heartShape = new THREE.Shape();
+        heartShape.moveTo(0, -5); heartShape.bezierCurveTo(0, -7, -4, -11, -8, -11); heartShape.bezierCurveTo(-12, -11, -12, -7, -12, -7); heartShape.bezierCurveTo(-12, -3, -8, 2, 0, 7); heartShape.bezierCurveTo(8, 2, 12, -3, 12, -7); heartShape.bezierCurveTo(12, -7, 12, -11, 8, -11); heartShape.bezierCurveTo(4, -11, 0, -7, 0, -5);
+        const heartGeometry = new THREE.ExtrudeGeometry(heartShape, { depth: 2, bevelEnabled: true, bevelThickness: 1, bevelSize: 1, bevelSegments: 1 });
+        const heartMaterial = new THREE.MeshStandardMaterial({ color: 0xFF0000, emissive: 0x660000 });
+        const starMaterial = new THREE.MeshStandardMaterial({ color: 0xFFD700, emissive: 0x996600, emissiveIntensity: 2 });
+        function spawnCollectibles() {
+            if (collectibles.stars.length < 15) {
+                const star = new THREE.Mesh(new THREE.IcosahedronGeometry(8, 0), starMaterial);
+                star.position.set((Math.random() - 0.5) * 6000, Math.random() * 400 + 50, (Math.random() - 0.5) * 6000);
+                collectibles.stars.push(star); scene.add(star);
+            }
+            if (player.health < player.maxHealth && collectibles.hearts.length < 3 && Math.random() < 0.05) {
+                const heart = new THREE.Mesh(heartGeometry, heartMaterial);
+                heart.position.set((Math.random() - 0.5) * 6000, Math.random() * 500 + 100, (Math.random() - 0.5) * 6000);
+                heart.rotation.z = Math.PI;
+                collectibles.hearts.push(heart); scene.add(heart);
+            }
+        }
+        
+        function updateGameLogic(deltaTime) {
+            handlePlayerMovement(deltaTime);
+            if (player.speed > 10) { spawnTimer -= deltaTime * 1000; if (spawnTimer <= 0) { spawnEnemy(); spawnTimer = Math.max(1500, 6000 - player.score * 2); } }
+            if (Math.random() < 0.05) spawnCollectibles();
+            
+            playerBullets.forEach(b => {
+                if (b.userData.active) {
+                    b.position.add(b.userData.velocity.clone().multiplyScalar(deltaTime));
+                    b.userData.lifetime -= deltaTime;
+                    b.scale.multiplyScalar(0.98);
+                    if (b.userData.lifetime <= 0) {
+                        b.userData.active = false;
+                        b.visible = false;
+                    }
+                }
+            });
+            
+            enemies.forEach((enemy, i) => {
+                enemy.mesh.lookAt(jet.position);
+                enemy.mesh.translateZ(80 * deltaTime);
+                playerBullets.forEach(b => {
+                    if (b.userData.active && b.position.distanceTo(enemy.mesh.position) < 20) {
+                        b.userData.active = false;
+                        b.visible = false;
+                        enemy.health--;
+                        if (enemy.health <= 0) {
+                            playSound('explosion');
+                            scene.remove(enemy.mesh);
+                            enemies.splice(i, 1);
+                            player.score += 250;
+                        }
+                    }
+                });
+                if (jet.position.distanceTo(enemy.mesh.position) < 25) {
+                    playSound('explosion');
+                    scene.remove(enemy.mesh);
+                    enemies.splice(i, 1);
+                    player.health = 0;
+                }
+            });
+
+            collectibles.stars.forEach((star, i) => { if(jet.position.distanceTo(star.position) < 20) { player.ammo = Math.min(player.maxAmmo, player.ammo + 25); playSound('collect'); scene.remove(star); collectibles.stars.splice(i, 1); }});
+            collectibles.hearts.forEach((heart, i) => { if(jet.position.distanceTo(heart.position) < 25) { if(player.health < player.maxHealth) player.health++; playSound('collect'); scene.remove(heart); collectibles.hearts.splice(i, 1); }});
+            
+            if (player.health <= 0) { gameState = 'GAME_OVER'; showGameOver(); }
+            updateHUD();
+        }
+        
+        const stabilitySystem = new THREE.Quaternion();
+        const checkInterval = 1000;
+        let lastCheck = 0;
+
+        function animate(time) {
+            requestAnimationFrame(animate);
+            const deltaTime = Math.min(0.05, clock.getDelta());
+            
+            if (gameState === 'PLAYING') {
+                updateGameLogic(deltaTime);
+                if (time - lastCheck > checkInterval) {
+                     stabilitySystem.copy(jet.quaternion);
+                     lastCheck = time;
+                }
+                jet.quaternion.slerp(stabilitySystem, 0.005);
+            }
+            
+            visualRoll = THREE.MathUtils.lerp(visualRoll, smoothedControls.right.x * 25, 0.1);
+            
+            if (isThirdPerson) {
+                cockpitContainer.style.display = 'none';
+                planeContainer.style.display = 'block';
+                planeContainer.style.transform = `translate(-50%, -50%) rotate(${visualRoll}deg)`;
+            } else {
+                planeContainer.style.display = 'none';
+                cockpitContainer.style.display = 'block';
+                cockpitContainer.style.transform = `rotate(${visualRoll}deg)`;
+            }
+            
+            const offset = isThirdPerson ? new THREE.Vector3(0, 8, -30) : new THREE.Vector3(0, 2.5, 0);
+            const cameraOffset = offset.applyQuaternion(jet.quaternion);
+            const desiredCamPos = jet.position.clone().add(cameraOffset);
+            camera.position.lerp(desiredCamPos, 0.1);
+            
+            const lookAtOffset = new THREE.Vector3(0, 0, 50).applyQuaternion(jet.quaternion);
+            const desiredLookAt = jet.position.clone().add(lookAtOffset);
+            camera.lookAt(desiredLookAt);            
+                        
+            renderer.render(scene, camera);
+        }
+
+        function showGameOver() { document.getElementById('game-ui').style.display = 'none'; const highScore = localStorage.getItem('flightSimHighScore') || 0; document.getElementById('final-score').textContent = `النتيجة: ${player.score}`; if (player.score > highScore) { localStorage.setItem('flightSimHighScore', player.score); document.getElementById('final-high-score').textContent = `رقم قياسي جديد!`; } else { document.getElementById('final-high-score').textContent = `أعلى نتيجة: ${highScore}`; } document.getElementById('game-over-screen').style.display = 'flex'; }
+        
+        document.getElementById('camera-button').addEventListener('click', () => { isThirdPerson = !isThirdPerson; });
+        document.getElementById('play-button').addEventListener('click', () => { initAudio(); document.getElementById('start-screen').style.display = 'none'; document.getElementById('game-ui').style.display = 'block'; initGame(); gameState = 'PLAYING'; });
+        document.getElementById('restart-button').addEventListener('click', () => { document.getElementById('game-over-screen').style.display = 'none'; document.getElementById('game-ui').style.display = 'block'; initGame(); gameState = 'PLAYING'; });
+
+        document.getElementById('start-high-score').textContent = `أعلى نتيجة: ${localStorage.getItem('flightSimHighScore') || 0}`;
+        animate();
+    </script>
+</body>
+</html>
