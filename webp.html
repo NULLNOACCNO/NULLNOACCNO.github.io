@@ -1,1 +1,304 @@
- 
+ <!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Pro WebP SEO Studio</title>
+<style>
+:root{--p:#6366f1;--p-h:#4f46e5;--bg:#0b0f1a;--c:#161b2c;--t:#f1f5f9;--accent:#22d3ee;--glass:rgba(255,255,255,0.03)}
+
+
+/* منع تحديد النصوص وإخفاء لون التحديد عند الضغط */
+*{
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+
+body{
+    font-family:'Segoe UI',system-ui,sans-serif;
+    background:var(--bg);
+    color:var(--t);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    margin:0;
+    padding:15px;
+}
+
+
+.card{
+    background:var(--c);
+    padding:1.8rem;
+    border-radius:1.5rem;
+    box-shadow:0 20px 50px rgba(0,0,0,0.5);
+    width:100%;
+    max-width:580px;
+    border:1px solid #2d3748;
+}
+
+
+.header-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:1.5rem;
+}
+
+
+h1{
+    margin:0;
+    font-size:1.6rem;
+    background:linear-gradient(90deg,var(--p),var(--accent));
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    font-weight:800;
+}
+
+
+.reset-btn{
+    background:var(--glass);
+    border:1px solid #334155;
+    color:#94a3b8;
+    padding:6px 14px;
+    border-radius:10px;
+    font-size:0.75rem;
+    cursor:pointer;
+    transition:0.3s;
+    font-weight:600;
+}
+
+
+.reset-btn:hover{
+    background:rgba(244,63,94,0.1);
+    color:#f43f5e;
+    border-color:#f43f5e;
+}
+
+
+#drop-zone{
+    border:2px dashed #334155;
+    padding:2.2rem 1rem;
+    border-radius:15px;
+    cursor:pointer;
+    transition:0.3s;
+    text-align:center;
+    background:var(--glass);
+    color:#94a3b8;
+}
+
+
+#drop-zone:hover{
+    border-color:var(--p);
+    background:rgba(99,102,241,0.05);
+    color:var(--t);
+}
+
+
+input[type="file"]{display:none}
+
+
+.group{
+    background:var(--glass);
+    padding:1.2rem;
+    border-radius:15px;
+    margin-top:1.2rem;
+    border:1px solid #2d3748;
+}
+
+
+.row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:12px;
+}
+
+
+.row label{
+    font-size:0.9rem;
+    font-weight:600;
+    color:var(--accent);
+}
+
+
+.num-in{
+    background:#0b0f1a;
+    border:1px solid #334155;
+    color:#fff;
+    padding:5px 8px;
+    border-radius:8px;
+    width:75px;
+    text-align:center;
+    font-weight:bold;
+    outline:none;
+    user-select: auto; /* السماح بالكتابة فقط داخل حقول الأرقام */
+}
+
+
+input[type=range]{-webkit-appearance:none;width:100%;background:transparent;cursor: pointer;}
+input[type=range]::-webkit-slider-runnable-track{height:6px;background:#334155;border-radius:3px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;height:18px;width:18px;border-radius:50%;background:var(--p);margin-top:-6px;border:2px solid #fff;box-shadow:0 0 10px rgba(0,0,0,0.5)}
+
+
+.presets{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.p-btn{background:#2d3748;border:none;color:#cbd5e1;padding:5px 9px;border-radius:6px;font-size:0.7rem;cursor:pointer;transition:0.2s}
+.p-btn:hover{background:var(--p);color:#fff}
+.p-label{width:100%;font-size:0.7rem;color:#64748b;margin-bottom:5px;display:block}
+
+
+.hint{font-size:0.8rem;color:#94a3b8;margin-top:10px;display:block;border-right:3px solid var(--p);padding-right:10px;min-height:1.2rem}
+
+
+.btn{background:linear-gradient(45deg,var(--p),#8b5cf6);color:#fff;border:none;padding:1.1rem;border-radius:12px;cursor:pointer;font-weight:bold;width:100%;margin-top:1.5rem;display:none;font-size:1.1rem;transition:0.3s;box-shadow:0 10px 20px -5px rgba(99,102,241,0.4)}
+.btn:hover{transform:translateY(-2px);box-shadow:0 15px 30px -5px rgba(99,102,241,0.6)}
+
+
+.status{margin-top:15px;text-align:center;font-size:0.85rem;color:var(--accent)}
+#list{margin-top:15px;max-height:100px;overflow-y:auto;font-size:0.75rem;color:#64748b;border-top:1px solid #2d3748;padding-top:10px}
+.warn{background:rgba(245,158,11,0.1);color:#fbbf24;padding:10px;border-radius:10px;font-size:0.8rem;margin-top:12px;display:none;border:1px solid rgba(245,158,11,0.2)}
+</style>
+</head>
+<body>
+<div class="card">
+    <div class="header-row">
+        <h1>WebP Studio</h1>
+        <button class="reset-btn" id="resetBtn">إعادة ضبط ↺</button>
+    </div>
+    
+    <div id="drop-zone">اضغط هنا أو اسحب الصور للتحويل</div>
+    <input type="file" id="fi" multiple accept="image/png,image/jpeg,image/webp">
+    
+    <div id="wn" class="warn">⚠️ الصور المتحركة GIF ستتحول لنسخة WebP ثابتة.</div>
+
+
+    <div class="group">
+        <div class="row"><label>جودة الضغط (0-100)</label><input type="number" id="qn" class="num-in"></div>
+        <input type="range" id="qr" min="1" max="100">
+        <span id="qh" class="hint"></span>
+    </div>
+
+
+    <div class="group">
+        <div class="row"><label>العرض المستهدف (بكسل)</label><input type="number" id="sn" class="num-in"></div>
+        <input type="range" id="sr" min="16" max="2560">
+        
+        <div class="presets">
+            <span class="p-label">أحجام SEO بكسل:</span>
+            <button class="p-btn" data-v="16">16</button>
+            <button class="p-btn" data-v="24">24</button>
+            <button class="p-btn" data-v="32">32</button>
+            <button class="p-btn" data-v="48">48</button>
+            <button class="p-btn" data-v="64">64</button>
+            <button class="p-btn" data-v="80">80</button>
+            <button class="p-btn" data-v="100">100</button>
+        </div>
+
+
+        <div class="presets" style="margin-top:10px">
+            <span class="p-label">الأحجام الشائعة:</span>
+            <button class="p-btn" data-v="320">320</button>
+            <button class="p-btn" data-v="720">720</button>
+            <button class="p-btn" data-v="1200">1200</button>
+            <button class="p-btn" data-v="1920">1920</button>
+        </div>
+        <span id="sh" class="hint"></span>
+    </div>
+
+
+    <div id="st" class="status"></div>
+    <button class="btn" id="db">تصدير الصور الآن</button>
+    <div id="list"></div>
+</div>
+
+
+<script>
+const dz=document.getElementById('drop-zone'),fi=document.getElementById('fi'),db=document.getElementById('db'),st=document.getElementById('st'),ls=document.getElementById('list'),qr=document.getElementById('qr'),qn=document.getElementById('qn'),qh=document.getElementById('qh'),sr=document.getElementById('sr'),sn=document.getElementById('sn'),sh=document.getElementById('sh'),wn=document.getElementById('wn'),rb=document.getElementById('resetBtn');
+let files=[];
+
+
+const updateQ=()=>{
+    let v=qn.value; qr.value=v;
+    if(v<40) qh.innerText='ضغط عالٍ: ملفات خفيفة جداً';
+    else if(v<80) qh.innerText='متوازن: توازن مثالي للويب';
+    else if(v<96) qh.innerText='جودة ممتازة: توافق تام مع SEO';
+    else qh.innerText='جودة قصوى: وضوح كامل للمصممين';
+};
+
+
+const updateS=()=>{
+    let v=sn.value; sr.value=v;
+    if(v<=16) sh.innerText='Favicon: أيقونة المتصفح';
+    else if(v<=100) sh.innerText='Small: أيقونات وعناصر واجهة';
+    else if(v<=480) sh.innerText='Mobile: صور مقالات الموبايل';
+    else if(v<=1200) sh.innerText='SEO: توافق Google Discover';
+    else sh.innerText='Desktop: صور شاشة كاملة عالية الدقة';
+};
+
+
+const reset=()=>{ qn.value=95; sn.value=1920; updateQ(); updateS(); };
+rb.onclick=reset;
+
+
+qr.oninput=()=>{qn.value=qr.value; updateQ()};
+qn.oninput=()=>{qr.value=qn.value; updateQ()};
+sr.oninput=()=>{sn.value=sr.value; updateS()};
+sn.oninput=()=>{sr.value=sn.value; updateS()};
+
+
+document.querySelectorAll('.p-btn').forEach(b=>{
+    b.onclick=()=>{sn.value=b.dataset.v; updateS();};
+});
+
+
+dz.onclick=()=>fi.click();
+fi.onchange=e=>up(e.target.files);
+dz.ondragover=e=>{e.preventDefault();dz.style.borderColor='#6366f1'};
+dz.ondragleave=()=>dz.style.borderColor='#334155';
+dz.ondrop=e=>{e.preventDefault();up(e.dataTransfer.files)};
+
+
+function up(f){
+    files=Array.from(f);
+    wn.style.display=files.some(i=>i.type==='image/gif')?'block':'none';
+    if(files.length){
+        ls.innerHTML=files.map(i=>`<div>• ${i.name}</div>`).join('');
+        db.style.display='block';
+        st.innerText=`تم اختيار ${files.length} ملفات`;
+    }
+}
+
+
+db.onclick=async()=>{
+    db.disabled=true; db.style.opacity='0.5';
+    const canvas=document.createElement('canvas'), ctx=canvas.getContext('2d'), quality=qn.value/100, targetW=parseInt(sn.value);
+    for(let i=0;i<files.length;i++){
+        const f=files[i]; st.innerText=`جاري التحويل: ${f.name}`;
+        try{
+            const img=new Image(), url=URL.createObjectURL(f);
+            await new Promise(res=>{img.onload=res; img.src=url});
+            let w=img.width, h=img.height;
+            if(w>targetW){ h=targetW*(h/w); w=targetW; }
+            canvas.width=w; canvas.height=h;
+            ctx.drawImage(img,0,0,w,h);
+            const data=canvas.toDataURL('image/webp', quality);
+            const a=document.createElement('a'); a.href=data;
+            a.download=f.name.split('.').slice(0,-1).join('.')+'_web.webp';
+            a.click();
+            URL.revokeObjectURL(url);
+            await new Promise(r=>setTimeout(r,250));
+        }catch(e){console.error(e)}
+    }
+    st.innerText='✨ تمت المعالجة بنجاح!';
+    db.disabled=false; db.style.opacity='1';
+};
+
+
+reset(); 
+</script>
+</body>
+</html>
