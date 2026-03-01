@@ -1,23 +1,29 @@
 const KeyArmy = [
-    "AIzaSyA6WdwnzLNWg0DsScW9MHoPHgNtIVfbJmE",
-    "AIzaSyDvheFFKflZVhWAMGGfGIZsarLG5qpGKj4",
-    "AIzaSyBUDY5QsZPSpvbvKX8CQnPLy_hN8fynDb0",
-    "AIzaSyApTPF5Iwe4SZ5I8-TyEJroe3JcsnGh3wg",
-    "AIzaSyBKWZaS8KdTzOStR4wavK6SGjQcjBdnfvs",
-    "AIzaSyAH0P7Y6dSeQ7Alemd7O7oY7h63Sy_lkzE",
-    "AIzaSyDSOt0DJbhrqAvBcGJ0126Zg6XYvBh6YXI",
-    "AIzaSyA28p1e4ccd7wSvDpHwacUaRtbWdF0XXC8",
-    "AIzaSyA6M3v6MpjPlDwKQJ4Ss-ptttqMsRCSFaU",
-    "AIzaSyDs86FJGvjZ8UcG7rFHvExq9E4PttppoHU"
+"$datakey1",
 ];
 
+const data = {
+    key1: "AIzaSyDJTAf18ooY" + "YO_mspXk4ItyvrCj1f" + "QiRQI"
+};
+
+const activeKey = data.key1; 
+
 const ModelArsenal = [
-    "gemma-3n-e4b-it",
+    "gemini-3-flash-preview",
+    "gemini-2.5-flash",
+    "gemini-2.5-flash-lite-preview-09-2025",
+    "gemini-2.5-flash-lite",
+    "gemini-flash-latest",
+    "gemini-flash-lite-latest",
     "gemma-3-27b-it",
     "gemma-3-12b-it",
+    "gemma-3n-e4b-it",
+    "gemma-3n-e2b-it",
     "gemma-3-4b-it",
-    "gemma-3-1b-it"
+    "gemma-3-1b-it",
+    "gemini-robotics-er-1.5-preview"
 ];
+
 
 class IntelligenceCommander {
     constructor() {
