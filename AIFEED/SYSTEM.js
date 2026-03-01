@@ -1,12 +1,10 @@
-const KeyArmy = [
-"$datakey1",
-];
-
-const data = {
+const dataKeys = {
     key1: "AIzaSyDJTAf18ooY" + "YO_mspXk4ItyvrCj1f" + "QiRQI"
 };
 
-const activeKey = data.key1; 
+const KeyArmy = [
+    dataKeys.key1,
+];
 
 const ModelArsenal = [
     "gemini-3-flash-preview",
