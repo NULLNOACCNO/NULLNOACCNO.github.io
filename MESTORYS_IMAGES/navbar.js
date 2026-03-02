@@ -5,7 +5,7 @@ style.textContent = `
     position: fixed; 
     top: 0; 
     left: 0;
-    z-index: 999;
+    z-index: 999999999;
     display: flex; 
     justify-content: center;
     padding: 0; margin: 0; 
