@@ -496,7 +496,7 @@ window.autoDateDetect = window.autoDateDetect ?? (localStorage.getItem('autoDate
     };
     
     var linkConfig = {
-        btn1: 'home', btn2: 'reels', btn3: 'search', btn4: 'more'
+        btn1: 'more', btn2: 'search', btn3: 'reels', btn4: 'home'
     };
 
     var navbar = document.getElementById("navbar1");
