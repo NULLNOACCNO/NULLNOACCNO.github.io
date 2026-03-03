@@ -1,4 +1,4 @@
- const navbar = document.getElementById('navbar1');
+ const navbar = document.getElementById('navbar31');
 const spacer = document.createElement('div');
 
 const navHeight = navbar.offsetHeight || 50; 
