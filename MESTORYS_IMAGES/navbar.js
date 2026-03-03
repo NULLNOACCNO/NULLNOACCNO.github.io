@@ -10,7 +10,7 @@ document.body.prepend(spacer);
 
 const style = document.createElement('style');
 style.textContent = `
-html{
+html {
   user-select: none; -webkit-tap-highlight-color: transparent;
 }
 #navbar31 { 
