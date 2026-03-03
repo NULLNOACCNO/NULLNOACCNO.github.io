@@ -11,7 +11,7 @@ document.body.prepend(spacer);
 
 const style = document.createElement('style');
 style.textContent = `
-#navbar1 { 
+#navbar31 { 
     background-color: #333; 
     position: fixed; 
     top: 0; 
