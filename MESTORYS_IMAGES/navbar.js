@@ -4,7 +4,6 @@ const spacer = document.createElement('div');
 const navHeight = navbar.offsetHeight || 50; 
 
 spacer.style.height = navHeight + 'px';
-spacer.style.width = '100%';
 spacer.style.display = 'block';
 
 document.body.prepend(spacer);
