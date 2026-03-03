@@ -47,7 +47,7 @@ document.head.appendChild(style);
 
 const svg1 = (function() {
     setTimeout(function() {
-        const nav = document.getElementById("navbar1");
+        const nav = document.getElementById("navbar31");
         if (!nav) return;        
         
         // منع التشغيل نهائياً إذا كان الفحص التلقائي مفعلاً
@@ -498,7 +498,7 @@ window.autoDateDetect = window.autoDateDetect ?? (localStorage.getItem('autoDate
         btn1: '/more', btn2: '/search', btn3: '/reels', btn4: '/home'
     };
 
-    var navbar = document.getElementById("navbar1");
+    var navbar = document.getElementById("navbar31");
     var activeMode = manualMode;
 
     function renderIcon(id, path) { var el = document.getElementById(id); if(el) el.innerHTML = id === 'logoArea' ? path : '<svg class="nav-content" viewBox="0 0 24 24">' + path + '</svg>'; }
