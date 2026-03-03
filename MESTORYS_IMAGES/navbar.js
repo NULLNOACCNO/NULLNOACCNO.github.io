@@ -23,7 +23,6 @@ style.textContent = `
 }
 .nav-constraint {
     width: 100%;
-    max-width: 1000px;
     height: 100%;
     display: flex;
     flex-direction: row-reverse;
