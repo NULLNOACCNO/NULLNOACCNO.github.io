@@ -390,7 +390,7 @@ window.autoDateDetect = window.autoDateDetect ?? (localStorage.getItem('autoDate
             var h = this.getHijri();
             var g = this.getGregorian();
             if (g.m === 2 && g.d === 14) return 10; 
-            if (h.m === 9) return 11;
+//Ramadan move
             if (h.m === 10 && h.d <= 3) return 12; 
             if (h.m === 12 && h.d >= 10 && h.d <= 13) return 13; 
             if (h.m === 1 && h.d === 1) return 14; 
@@ -414,6 +414,8 @@ window.autoDateDetect = window.autoDateDetect ?? (localStorage.getItem('autoDate
             if (g.m === 6 && g.d === 5) return 32; 
             if (g.m === 11 && g.d === 20) return 33; 
             if (g.m === 8 && g.d === 12) return 34;
+//الاولوية للأيام على شهر رمضان
+            if (h.m === 9) return 11;
             return null;
         }
     };
