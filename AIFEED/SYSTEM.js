@@ -18,8 +18,8 @@ const ModelArsenal = [
     "gemma-3n-e2b-it",
     "gemma-3-4b-it",
     "gemma-3-1b-it",
-    "gemini-robotics-er-1.5-preview"
-    "gemini-3-flash-preview",
+    "gemini-robotics-er-1.5-preview",
+    "gemini-3-flash-preview"
 ];
 
 
