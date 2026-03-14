@@ -7,11 +7,6 @@ const KeyArmy = [
 ];
 
 const ModelArsenal = [
-    "gemini-2.5-flash",
-    "gemini-2.5-flash-lite-preview-09-2025",
-    "gemini-2.5-flash-lite",
-    "gemini-flash-latest",
-    "gemini-flash-lite-latest",
     "gemma-3-27b-it",
     "gemma-3-12b-it",
     "gemma-3n-e4b-it",
@@ -19,6 +14,11 @@ const ModelArsenal = [
     "gemma-3-4b-it",
     "gemma-3-1b-it",
     "gemini-robotics-er-1.5-preview",
+    "gemini-2.5-flash",
+    "gemini-2.5-flash-lite-preview-09-2025",
+    "gemini-2.5-flash-lite",
+    "gemini-flash-latest",
+    "gemini-flash-lite-latest",
     "gemini-3-flash-preview"
 ];
 
