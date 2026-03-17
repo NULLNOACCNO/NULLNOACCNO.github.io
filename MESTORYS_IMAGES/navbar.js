@@ -202,7 +202,7 @@ const svg1 = (function() {
         }
                 
         for(let x = -20; x < window.innerWidth + 80; x += 15) {
-            flamesArr.push({ obj: new FlameCore(), x: x - 7, y: 25, scale: 0.5 });
+            flamesArr.push({ obj: new FlameCore(), x: x - 7, y: 18, scale: 0.5 });
         }
 
         function anim() {
