@@ -532,14 +532,14 @@ window.autoDateDetect = window.autoDateDetect ?? (localStorage.getItem('autoDate
         navbar.style.transition = "all 0.8s cubic-bezier(0.215, 0.610, 0.355, 1.000)";
         if (activeMode === 1) {
             navbar.style.width = "0";
-            navbar.style.height = "60px";
+            navbar.style.height = "52px";
             navbar.style.left = "0";
             navbar.style.right = "auto";
             setTimeout(function() { navbar.style.width = "100%"; }, 10);
         }
         if (activeMode === 2) {
             navbar.style.width = "0";
-            navbar.style.height = "60px";
+            navbar.style.height = "52px";
             navbar.style.left = "auto";
             navbar.style.right = "0";
             setTimeout(function() { navbar.style.width = "100%"; }, 10);
@@ -549,18 +549,18 @@ window.autoDateDetect = window.autoDateDetect ?? (localStorage.getItem('autoDate
             navbar.style.height = "0";
             navbar.style.top = "0";
             navbar.style.bottom = "auto";
-            setTimeout(function() { navbar.style.height = "60px"; }, 10);
+            setTimeout(function() { navbar.style.height = "52px"; }, 10);
         }
         if (activeMode === 4) {
             navbar.style.width = "100%";
             navbar.style.height = "0";
             navbar.style.top = "auto";
             navbar.style.bottom = "0";
-            setTimeout(function() { navbar.style.height = "60px"; }, 10);
+            setTimeout(function() { navbar.style.height = "52px"; }, 10);
         }
             if (activeMode === 5) {
             navbar.style.width = "100%";
-            navbar.style.height = "60px";
+            navbar.style.height = "52px";
             navbar.style.transition = "none";
             navbar.style.opacity = "0";
             void navbar.offsetWidth; 
@@ -571,7 +571,7 @@ window.autoDateDetect = window.autoDateDetect ?? (localStorage.getItem('autoDate
         }
         if (activeMode === 6) {
             navbar.style.width = "100%";
-            navbar.style.height = "60px";
+            navbar.style.height = "52px";
             navbar.style.transition = "none";
             navbar.style.transform = "scale(0)";
             navbar.style.opacity = "0";
@@ -584,7 +584,7 @@ window.autoDateDetect = window.autoDateDetect ?? (localStorage.getItem('autoDate
         }          
     } else {
         navbar.style.width = "100%";
-        navbar.style.height = "60px";
+        navbar.style.height = "52px";
         navbar.style.transition = "all 0s cubic-bezier(0.215, 0.610, 0.355, 1.000)";
     }
     
