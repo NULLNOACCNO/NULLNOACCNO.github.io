@@ -690,3 +690,22 @@ window.autoDateDetect = window.autoDateDetect ?? (localStorage.getItem('autoDate
         document.querySelectorAll('input, textarea').forEach(enforceTextDirection);
     });
 })();
+
+
+
+
+
+
+
+
+
+// block the button if fast clicks 
+
+
+document.addEventListener("click",e=>{let t=e.target.closest('button,a,input,[onclick],[role="button"],[class*="btn"]');t&&!t.closest(".allow-multi-click")&&(t._lck?(e.preventDefault(),e.stopImmediatePropagation()):(t._lck=1,setTimeout(()=>t._lck=0,1e3)))},!0);
+
+
+
+
+ 
+    
