@@ -702,8 +702,7 @@ window.autoDateDetect = window.autoDateDetect ?? (localStorage.getItem('autoDate
 // block the button if fast clicks 
 
 
-document.addEventListener("click",e=>{let t=e.target.closest('button,a,input,[onclick],[role="button"],[class*="btn"]');t&&!t.closest(".allow-multi-click")&&(t._lck?(e.preventDefault(),e.stopImmediatePropagation()):(t._lck=1,setTimeout(()=>t._lck=0,1e3)))},!0);
-
+document.addEventListener("click",e=>{let t=e.target.closest("button,a,[onclick]");if(t&&!t.classList.contains("allow-multi-click")){if(t.hasAttribute("data-lck"))return e.preventDefault(),e.stopPropagation(),e.stopImmediatePropagation(),!1;t.setAttribute("data-lck","1"),t.style.pointerEvents="none",setTimeout(()=>{t.removeAttribute("data-lck"),t.style.pointerEvents=""},1e3)}},!0);
 
 
 
