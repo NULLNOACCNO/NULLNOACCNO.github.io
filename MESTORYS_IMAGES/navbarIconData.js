@@ -1,2 +1,2 @@
-window.manualMode = 2;
-window.autoDateDetect = false; 
+window.manualMode = 0;
+window.autoDateDetect = true; 
