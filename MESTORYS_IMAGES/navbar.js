@@ -495,7 +495,8 @@ window.autoDateDetect = window.autoDateDetect ?? (localStorage.getItem('autoDate
         btn4: '<path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>',
         btn3: '<path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-4zM9.5 17V9l6 4-6 4z"/>',
         btn2: '<path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>',
-        btn1: '<path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>'
+        btn1: '<path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>',
+        btn5: '<path d="M15 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
     };
     
     var linkConfig = {
@@ -521,6 +522,7 @@ window.autoDateDetect = window.autoDateDetect ?? (localStorage.getItem('autoDate
     renderIcon('btn2', contentConfig.btn2);
     renderIcon('btn3', contentConfig.btn3);
     renderIcon('btn4', contentConfig.btn4);
+    renderIcon('btn5', contentConfig.btn5);
     
     document.getElementById('btn1').onclick = function(){ window.location.href = linkConfig.btn1; };
     document.getElementById('btn2').onclick = function(){ window.location.href = linkConfig.btn2; };
