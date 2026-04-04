@@ -60,23 +60,34 @@
             return `[${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}] ${hours}:${minutes} ${ampm}`;
         },
 
+        broadcastTyping(isTyping) {
+            // إظهارها محلياً
+            if (typeof TypingHandler !== 'undefined') {
+                TypingHandler.handleIncomingTyping({ user_id: this.aiId, is_typing: isTyping });
+            }
+            // إرسالها عبر الشبكة ليراها الجميع في المجموعة أو الخاص
+            if (typeof chatUpdatesChannel !== 'undefined' && chatUpdatesChannel) {
+                chatUpdatesChannel.send({ 
+                    type: 'broadcast', 
+                    event: 'typing', 
+                    payload: { user_id: this.aiId, is_typing: isTyping } 
+                });
+            }
+        },
+
         async processMessage(userMessage, chatId) {
             if (!navigator.onLine) return;
             
             await this.init();
 
-            // بث حالة "يكتب الآن" ليراها الجميع
-            if (typeof TypingHandler !== 'undefined') {
-                TypingHandler.handleIncomingTyping({ user_id: this.aiId, is_typing: true });
-            }
+            // إطلاق حالة "يكتب الآن" للجميع وتجديدها
+            this.broadcastTyping(true);
             const typingInterval = setInterval(() => {
-                if (typeof TypingHandler !== 'undefined') {
-                    TypingHandler.handleIncomingTyping({ user_id: this.aiId, is_typing: true });
-                }
+                this.broadcastTyping(true);
             }, 2000);
 
             try {
-                // سحب آخر 20 رسالة
+                // سحب آخر 20 رسالة للاقتصاد في الاستهلاك
                 const historyArray = (typeof currentChatState !== 'undefined' ? currentChatState.messages :[]).slice(-20);
                 const safeHistory = historyArray.map(m => `${m.user_id === this.aiId ? 'Assistant' : 'User'}: ${m.content}`).join('\n');
                 const currentTime = this.getCurrentTime();
@@ -123,9 +134,7 @@ OUTPUT FORMAT (Strict JSON):
 - User Locale: ${data.detected_language}
 - You are MESTORYS AI.
 ${combinedRules}[LONG_TERM_MEMORY_SUMMARY]
-${data.history_summary}
-
-[RECENT_CONVERSATION_HISTORY]
+${data.history_summary}[RECENT_CONVERSATION_HISTORY]
 ${safeHistory}
 
 [CURRENT_USER_INPUT]
@@ -152,8 +161,7 @@ Reply strictly in ${data.detected_language}. Respond ONLY with the content. No p
                     displayContent = finalReply.replace(match[0], '').trim() || "تم توليد الصورة المطلوبة";
                 }
 
-                // === إرسال الرسالة إلى قاعدة البيانات فقط ===
-                // لن نعرضها محلياً، بل سننتظر وصولها عبر Realtime Channel كأي مستخدم آخر
+                // إرسال الرسالة إلى قاعدة البيانات فقط (ستظهر للجميع ولن يتم تكرارها محلياً)
                 if (typeof client !== 'undefined') {
                     await client.from("messages").insert({
                         chat_id: chatId,
@@ -177,10 +185,9 @@ Reply strictly in ${data.detected_language}. Respond ONLY with the content. No p
                     });
                 }
             } finally {
+                // إيقاف مؤشر "يكتب الآن" للجميع
                 clearInterval(typingInterval);
-                if (typeof TypingHandler !== 'undefined') {
-                    TypingHandler.handleIncomingTyping({ user_id: this.aiId, is_typing: false });
-                }
+                this.broadcastTyping(false);
             }
         }
     };
