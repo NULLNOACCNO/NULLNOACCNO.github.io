@@ -7,6 +7,7 @@
     const SB_URL = 'https://mrynkcevthcixgvmdndi.supabase.co/rest/v1/rpc/google_proxy';
     const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1yeW5rY2V2dGhjaXhndm1kbmRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5Mzk1NzksImV4cCI6MjA3MTUxNTU3OX0.5Fv2mprNFWNfwtqhX9lZuCDZ5weazFK80YLuJiX6Ejg';
 
+    // تجاوز اتصال Google Generative AI عبر بروكسي Supabase
     window.fetch = async function(url, options) {
         const u = typeof url === 'string' ? url : (url.url || '');
         if (u.includes('googleapis.com')) {
@@ -61,11 +62,11 @@
         },
 
         broadcastTyping(isTyping) {
-            // إظهارها محلياً
+            // إرسال يكتب الآن للمستخدم المحلي
             if (typeof TypingHandler !== 'undefined') {
                 TypingHandler.handleIncomingTyping({ user_id: this.aiId, is_typing: isTyping });
             }
-            // إرسالها عبر الشبكة ليراها الجميع في المجموعة أو الخاص
+            // إرسال يكتب الآن لجميع المتصلين بالسيرفر
             if (typeof chatUpdatesChannel !== 'undefined' && chatUpdatesChannel) {
                 chatUpdatesChannel.send({ 
                     type: 'broadcast', 
@@ -80,18 +81,19 @@
             
             await this.init();
 
-            // إطلاق حالة "يكتب الآن" للجميع وتجديدها
+            // تشغيل وتثبيت مؤشر "يكتب الآن" طوال فترة التفكير
             this.broadcastTyping(true);
             const typingInterval = setInterval(() => {
                 this.broadcastTyping(true);
             }, 2000);
 
             try {
-                // سحب آخر 20 رسالة للاقتصاد في الاستهلاك
+                // قراءة آخر 20 رسالة لتحليل السياق
                 const historyArray = (typeof currentChatState !== 'undefined' ? currentChatState.messages :[]).slice(-20);
                 const safeHistory = historyArray.map(m => `${m.user_id === this.aiId ? 'Assistant' : 'User'}: ${m.content}`).join('\n');
                 const currentTime = this.getCurrentTime();
 
+                // 1. المحلل (Analyzer)
                 const analyzerPrompt = `
 ROLE: System Intent Analyzer (JSON Output Engine).
 INPUTS:
@@ -105,7 +107,6 @@ OUTPUT FORMAT (Strict JSON):
     "history_summary": "Extracted summary of important facts before the last 20 messages",
     "detected_language": "ar"
 }`;
-
                 const analyzerResponse = await executeChatRequest([{ role: "user", content: analyzerPrompt }]);
                 const analyzerJson = await analyzerResponse.text();
                 const cleanJson = analyzerJson.match(/\{[\s\S]*\}/)?.[0] || "{}";
@@ -121,12 +122,14 @@ OUTPUT FORMAT (Strict JSON):
 
                 const deviceLang = (navigator.languages && navigator.languages.length > 0) ? navigator.languages[0].slice(0, 2) : navigator.language.slice(0, 2);        
                 
+                // جلب قواعد التفكير
                 const rulePromises = data.files.map(async (file) => {
                     const res = await fetch(`https://nullnoaccno.github.io/AIFEED/${file}`);
                     return res.ok ? `--- RULE FILE (${file}) ---\n${await res.text()}\n` : "";
                 });
                 const combinedRules = (await Promise.all(rulePromises)).join("\n");
 
+                // 2. المنفذ النهائي (Finalizer)
                 const finalizerPrompt = `
 [SYSTEM_CONTEXT]
 - Time: ${data.need_time ? currentTime : ""}
@@ -134,11 +137,15 @@ OUTPUT FORMAT (Strict JSON):
 - User Locale: ${data.detected_language}
 - You are MESTORYS AI.
 ${combinedRules}[LONG_TERM_MEMORY_SUMMARY]
-${data.history_summary}[RECENT_CONVERSATION_HISTORY]
+${data.history_summary}
+
+[RECENT_CONVERSATION_HISTORY]
 ${safeHistory}
 
 [CURRENT_USER_INPUT]
-${userMessage}[FINAL_OUTPUT_INSTRUCTION]
+${userMessage}
+
+[FINAL_OUTPUT_INSTRUCTION]
 Reply strictly in ${data.detected_language}. Respond ONLY with the content. No prefixes.`;
 
                 const finalizerResponse = await executeChatRequest([{ role: "user", content: finalizerPrompt }]);
@@ -147,7 +154,7 @@ Reply strictly in ${data.detected_language}. Respond ONLY with the content. No p
                 const proxyTester = window.AICommander ? window.AICommander.getProxyError() : "403";
                 if (finalReply === proxyTester) throw new Error("403");
 
-                // --- استخراج الصور ومعالجتها ---
+                // 3. فلترة الصور ومعالجتها
                 let msgType = "text";
                 let fileUrl = null;
                 let displayContent = finalReply;
@@ -158,10 +165,11 @@ Reply strictly in ${data.detected_language}. Respond ONLY with the content. No p
                 if (match) {
                     msgType = "image";
                     fileUrl = match[1] || match[2];
-                    displayContent = finalReply.replace(match[0], '').trim() || "تم توليد الصورة المطلوبة";
+                    // إذا كان هناك صورة سيتم تنظيف النص وجعله رسالة صورة في قاعدة البيانات
+                    displayContent = ""; 
                 }
 
-                // إرسال الرسالة إلى قاعدة البيانات فقط (ستظهر للجميع ولن يتم تكرارها محلياً)
+                // 4. إرسال الرسالة لقاعدة البيانات كالمعتاد (ستظهر للجميع ولن يتم تكرارها محلياً)
                 if (typeof client !== 'undefined') {
                     await client.from("messages").insert({
                         chat_id: chatId,
@@ -185,7 +193,7 @@ Reply strictly in ${data.detected_language}. Respond ONLY with the content. No p
                     });
                 }
             } finally {
-                // إيقاف مؤشر "يكتب الآن" للجميع
+                // إغلاق مؤشر الكتابة للجميع بمجرد الانتهاء
                 clearInterval(typingInterval);
                 this.broadcastTyping(false);
             }
