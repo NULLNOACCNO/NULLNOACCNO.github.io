@@ -3,12 +3,14 @@
     window.isAiInjected = true;
     console.log("%c[SYSTEM]: تم بدأ نظام MESTORYS AI بنجاح...", "color: #0984e3; font-weight: bold;");
 
+    // 1. نظام تجاوز البروكسي الأساسي (لا غنى عنه)
     const originalFetch = window.fetch;
     const SB_URL = 'https://mrynkcevthcixgvmdndi.supabase.co/rest/v1/rpc/google_proxy';
     const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1yeW5rY2V2dGhjaXhndm1kbmRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5Mzk1NzksImV4cCI6MjA3MTUxNTU3OX0.5Fv2mprNFWNfwtqhX9lZuCDZ5weazFK80YLuJiX6Ejg';
 
     window.fetch = async function(url, options) {
         const u = typeof url === 'string' ? url : (url.url || '');
+        
         if (u.includes('googleapis.com')) {
             try {
                 const r = await originalFetch(SB_URL, {
@@ -16,12 +18,14 @@
                     headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' },
                     body: JSON.stringify({ target_url: u, payload_body: options?.body })
                 });
+                console.log("%c[DATABASE]: تم الاتصال بـ Supabase بنجاح واستلام البيانات.", "color: #00b894; font-weight: bold;");
                 return new Response(JSON.stringify(await r.json()), { status: 200, headers: {'Content-Type': 'application/json'} });
             } catch (e) { return new Response(JSON.stringify({error: e.toString()}), {status: 500}); }
         }
         return originalFetch(url, options);
     };
 
+    // 2. دالة تنفيذ الطلب
     async function executeChatRequest(messages) {
         if (!window.AICommander) {
             return new Response("جاري تحميل نظام الذكاء الصناعي... انتظر لحظة وحاول مجدداً.");
@@ -34,6 +38,7 @@
         }
     }
 
+    // 3. كائن الذكاء الصناعي المربوط بالشات
     window.MestorysAI = {
         aiId: 'f11f9a2d-b260-4abb-9b5d-34af21a2859f',
         isInitialized: false,
@@ -49,70 +54,133 @@
             }
         },
 
+        getCurrentTime() {
+            const now = new Date();
+            const day = now.getDate();
+            const month = now.getMonth() + 1;
+            const year = now.getFullYear();
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            const ampm = hours >= 12 ? 'م' : 'ص';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            return `[${day}/${month}/${year}] ${hours}:${minutes} ${ampm}`;
+        },
+
         async processMessage(userMessage, chatId) {
             if (!navigator.onLine) return;
             
             await this.init();
 
-            // إظهار حالة "يكتب الآن..." في واجهة المحادثة الرئيسية
+            // إظهار حالة "يكتب الآن..." للذكاء الصناعي في الواجهة
             if (typeof TypingHandler !== 'undefined') {
                 TypingHandler.handleIncomingTyping({ user_id: this.aiId, is_typing: true });
             }
 
             try {
-                // جلب آخر 10 رسائل كـ سياق
-                const historyArray = (typeof currentChatState !== 'undefined' ? currentChatState.messages :[]).slice(-10);
+                // سحب سجل المحادثة من الشات (للحفاظ على السياق)
+                const visibleCount = document.getElementById('messages-container').querySelectorAll('.message-wrapper').length || 20;
+                const historyArray = (typeof currentChatState !== 'undefined' ? currentChatState.messages :[]).slice(-visibleCount);
                 const safeHistory = historyArray.map(m => `${m.user_id === this.aiId ? 'Assistant' : 'User'}: ${m.content}`).join('\n');
 
-                const analyzerPrompt = `
-ROLE: System Intent Analyzer (JSON Output Engine).
-INPUTS:
-- User Message: "${userMessage}"
-- History Context: "${safeHistory}"
+                const currentTime = this.getCurrentTime();
 
-OUTPUT FORMAT (Strict JSON):
-{
-    "files": ["USER_INTERACTION.txt", "SYSTEM_RULES.txt"],
-    "need_time": false,
-    "history_summary": "",
-    "detected_language": "ar"
-}`;
+                // === 1. طلب المحلل (Analyzer) ===
+                const analyzerPrompt = `
+        ROLE: System Intent Analyzer (JSON Output Engine).
+        
+        INPUTS:
+        - User Message: "${userMessage}"
+        - History Context: "${safeHistory}"
+        
+        AVAILABLE RULES:
+        1. YOU_IDENTITY.txt (Questions about Identity, Origin, Author, sexual, illegal, naked, Sexual words,Your sexual potential, An alternative to illegal and sexual)
+        2. SYSTEM_RULES.txt (Security, Policy, Restrictions)
+        3. COMPANY_INFO.txt (SOPERS 2077, Owner, Projects)
+        4. IMAGE_ENGINE.txt (Drawing, Image Generation triggers)
+        5. SEARCH_PROTOCOL.txt (Real-time news, Weather, Facts)
+        6. URL_PROTOCOL.txt (Link formatting instructions)
+        7. PROGRAMMING_LOGIC.txt (Code, Script, Fix, Replace, Syntax, HTML/CSS/JS)
+        8. FORMATTING_RULES.txt (Text styling queries)
+        9. USER_INTERACTION.txt (Greetings, Small talk, Emotions)
+        10. ROLEPLAY_ENGINE.txt (Persona, Roleplay)
+        11. CONTEXT_INTELLIGENCE.txt (Complex/Ambiguous requests)
+
+        TASK:
+        1. Analyze the user's intent and detect the language of "User Message"
+        2. Select ALL relevant files based on the intent.
+        3. Determine if Time/Date is needed.
+        4. Summarize history ONLY if relevant to the current request.
+
+        OUTPUT FORMAT (Strict JSON):
+        {
+            "files": ["filename1.txt", "filename2.txt"],
+            "need_time": boolean,
+            "history_summary": "string or null",
+            "detected_language": "string"
+        }`;
 
                 const analyzerResponse = await executeChatRequest([{ role: "user", content: analyzerPrompt }]);
                 const analyzerJson = await analyzerResponse.text();
                 const cleanJson = analyzerJson.match(/\{[\s\S]*\}/)?.[0] || "{}";
                 
-                let data = { files:["USER_INTERACTION.txt", "SYSTEM_RULES.txt"], need_time: false, history_summary: "", detected_language: "ar" };
+                let data = { files:["USER_INTERACTION.txt" , "YOU_IDENTITY.txt" , "SYSTEM_RULES.txt"], need_time: false, history_summary: "", detected_language: "ar" };
                 try {
                     const parsed = JSON.parse(cleanJson);
-                    if (parsed.detected_language) data.detected_language = parsed.detected_language;
-                } catch (e) {}
+                    data.files = (parsed.files && parsed.files.length > 0) ? parsed.files : data.files;
+                    data.need_time = parsed.need_time || false;
+                    data.history_summary = parsed.history_summary || "";
+                    data.detected_language = parsed.detected_language || "ar";
+                } catch (e) { console.error("Analyzer Parsing Error", e); }
 
-                const deviceLang = (navigator.languages && navigator.languages.length > 0) ? navigator.languages[0].slice(0, 2) : navigator.language.slice(0, 2);        
+                const language = data.detected_language;
+                console.log(
+                    `%c[المحلل] تقرير المعطيات:\n1. رسالة المستخدم: "${userMessage}"\n2. اللغة المكتشفة: ${language}\n3. الملفات المختارة: ${JSON.stringify(data.files)}\n4. طلب الوقت: ${data.need_time}\n5. ملخص التاريخ: "${data.history_summary}"`, 
+                    "color: #a29bfe; background: #2d3436; padding: 12px; border-left: 5px solid #6C5CE7; font-size: 12px;"
+                );
+
+                // === 2. جلب الملفات المطلوبة ===
+                const rulePromises = data.files.map(async (file) => {
+                    const res = await fetch(`https://nullnoaccno.github.io/AIFEED/${file}`);
+                    return res.ok ? `--- RULE FILE (${file}) ---\n${await res.text()}\n` : "";
+                });
+                const combinedRules = (await Promise.all(rulePromises)).join("\n");
                 
-                const finalizerPrompt = `
-[SYSTEM_CONTEXT]
-- Device Language: ${deviceLang}
-- User Locale: ${data.detected_language}
-- You are MESTORYS AI.
+                const timePayload = data.need_time ? currentTime : "";
+                const deviceLang = (navigator.languages && navigator.languages.length > 0) ? navigator.languages[0].slice(0, 2) : navigator.language.slice(0, 2);        
 
-[CONVERSATION_HISTORY]
-${safeHistory}
+                // === 3. المنفذ النهائي (Finalizer) ===
+                // تم تغيير اسم الذكاء ليتناسب مع MESTORYS
+                const finalizerPrompt = `[SYSTEM_CONTEXT]
+ - Time: ${timePayload}
+ - Device Language: ${deviceLang}
+ - User Locale: ${language}
 
-[CURRENT_USER_INPUT]
-${userMessage}
+ [SYSTEM_INSTRUCTIONS]
+ - You are MESTORYS AI from SOPERS 2077. (You are a variant of HACERYOUDIE AI).
+ ${combinedRules}[CONVERSATION_HISTORY]
+ ${safeHistory}
 
-[FINAL_OUTPUT_INSTRUCTION]
-Reply strictly in ${data.detected_language}. Respond ONLY with the content. No prefixes.
-`;
+ [CONTEXT_NOTE]
+ ${data.history_summary}[CURRENT_USER_INPUT]
+ ${userMessage}
+
+ [FINAL_OUTPUT_INSTRUCTION]
+ Reply strictly in ${language}. Respond ONLY with the content. No prefixes.
+ `;
+
+                console.log("%c[المنفذ] الرسالة المرسلة:", "color: #00cec9; font-weight: bold;", finalizerPrompt);
 
                 const finalizerResponse = await executeChatRequest([{ role: "user", content: finalizerPrompt }]);
-                let finalReply = await finalizerResponse.text();
+                const finalReply = await finalizerResponse.text();
                 
                 const proxyTester = window.AICommander ? window.AICommander.getProxyError() : "403";
-                if (finalReply === proxyTester) throw new Error("403");
+                if (finalReply === proxyTester || finalizerResponse.status === 403) throw new Error("403");
 
-                // إرسال الرسالة إلى قاعدة البيانات ليتم عرضها كالمعتاد
+                console.log("%c[المنفذ] الرسالة المستلمة:", "color: #fd79a8; font-weight: bold;", finalReply);
+
+                // === 4. إرسال الرسالة إلى قاعدة بيانات Supabase ليراها المستخدم ===
                 if (typeof client !== 'undefined') {
                     await client.from("messages").insert({
                         chat_id: chatId,
@@ -123,17 +191,24 @@ Reply strictly in ${data.detected_language}. Respond ONLY with the content. No p
                 }
 
             } catch (error) {
-                console.error("AI Processing Error:", error);
+                console.error("AI Error:", error);
+                let errorMsg = "حدث خطأ غير متوقع.";
+                
+                // معالجة خطأ 403 (حظر بروكسي)
+                if (error.message.includes('403') || error.status === 403) {
+                    errorMsg = window.AICommander ? window.AICommander.getProxyError() : "تم رفض الاتصال من الخادم.";
+                }
+
                 if (typeof client !== 'undefined') {
                     await client.from("messages").insert({
                         chat_id: chatId,
                         user_id: this.aiId,
-                        content: "عذراً، حدث خطأ أثناء معالجة طلبك.",
+                        content: errorMsg,
                         type: "text"
                     });
                 }
             } finally {
-                // إخفاء حالة "يكتب الآن..."
+                // إيقاف مؤشر "يكتب الآن..."
                 if (typeof TypingHandler !== 'undefined') {
                     TypingHandler.handleIncomingTyping({ user_id: this.aiId, is_typing: false });
                 }
@@ -141,6 +216,6 @@ Reply strictly in ${data.detected_language}. Respond ONLY with the content. No p
         }
     };
 
-    // تهيئة مسبقة للـ API
+    // تشغيل كود التهيئة بمجرد تحميل الملف
     window.MestorysAI.init();
 })();
