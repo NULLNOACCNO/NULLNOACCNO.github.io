@@ -18,7 +18,7 @@ html {
     position: fixed; 
     top: 0; 
     left: 0;
-    z-index: 999999999;
+    z-index: 99999;
     display: flex; 
     justify-content: center;
     padding: 0; margin: 0; 
@@ -345,7 +345,7 @@ const newYear = (function() {
 
 (function() {
     
-window.manualMode = window.manualMode ?? (localStorage.getItem('manualMode') !== null ? Number(localStorage.getItem('manualMode')) : 0);
+//window.manualMode = window.manualMode ?? (localStorage.getItem('manualMode') !== null ? Number(localStorage.getItem('manualMode')) : 0);
 window.autoDateDetect = window.autoDateDetect ?? (localStorage.getItem('autoDateDetect') !== null ? localStorage.getItem('autoDateDetect') === 'true' : true);
 
 
@@ -403,7 +403,7 @@ window.autoDateDetect = window.autoDateDetect ?? (localStorage.getItem('autoDate
             if (g.m === 12 && g.d === 25) return 21; 
             if (g.m === 9 && (g.d === 12 || g.d === 13)) return 22;
             if (g.m === 12 && g.d === 8) return 23; 
-            if (g.m === 1 && g.d === 1) return 24; 
+            if (g.m === 4 && g.d === 2) return 24; 
             if (g.m === 11 && g.d === 19) return 25; 
             if (g.m === 6 && g.d === 21) return 26; 
             if (g.m === 9 && g.d === 21) return 27; 
@@ -414,6 +414,7 @@ window.autoDateDetect = window.autoDateDetect ?? (localStorage.getItem('autoDate
             if (g.m === 6 && g.d === 5) return 32; 
             if (g.m === 11 && g.d === 20) return 33; 
             if (g.m === 8 && g.d === 12) return 34;
+            if (g.m === 4 && g.d === 5) return 35;
 //الاولوية للأيام على شهر رمضان
             if (h.m === 9) return 11;
             return null;
@@ -465,6 +466,7 @@ window.autoDateDetect = window.autoDateDetect ?? (localStorage.getItem('autoDate
     32: { bg: "", overlay: "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0ibmF0dXJlR3JlZW4iIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMmVjYzcxIi8+IDxzdG9wIG9mZnNldD0iNTAlIiBzdG9wLWNvbG9yPSIjMjdhZTYwIi8+IDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzFlODQ0OSIvPiAKICAgIDwvbGluZWFyR3JhZGllbnQ+CgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJ0ZXh0R3JhZCIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMjdhZTYwIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzE0NWEzMiIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KCiAgICA8ZmlsdGVyIGlkPSJzb2Z0U2hhZG93Ij4KICAgICAgPGZlRHJvcFNoYWRvdyBkeD0iMS4yIiBkeT0iMS41IiBzdGREZXZpYXRpb249IjEiIGZsb29kLWNvbG9yPSIjMDAwIiBmbG9vZC1vcGFjaXR5PSIwLjMiLz4KICAgIDwvZmlsdGVyPgoKICAgIDxnIGlkPSJsZWFmSWNvbiI+CiAgICAgIDxwYXRoIGQ9Ik0xMCAzMCBRMTAgMTAgMzAgMTAgUTMwIDMwIDEwIDMwIFoiIGZpbGw9InVybCgjbmF0dXJlR3JlZW4pIiAvPgogICAgICA8cGF0aCBkPSJNMTAgMzAgTDMwIDEwIiBzdHJva2U9IiMwZTYyNTEiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIvPgogICAgPC9nPgogIDwvZGVmcz4KCiAgPHVzZSBocmVmPSIjbGVhZkljb24iIHg9IjE1IiB5PSIzMCIgZmlsdGVyPSJ1cmwoI3NvZnRTaGFkb3cpIiB0cmFuc2Zvcm09InNjYWxlKDEuMikiLz4KICA8dXNlIGhyZWY9IiNsZWFmSWNvbiIgeD0iMTM1IiB5PSIzMCIgZmlsdGVyPSJ1cmwoI3NvZnRTaGFkb3cpIiB0cmFuc2Zvcm09InNjYWxlKDEuMikiLz4KICAKICA8dGV4dCB4PSIxMDAiIHk9IjE4OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjIyIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0idXJsKCN0ZXh0R3JhZCkiIHN0cm9rZT0iIzBlNjI1MSIgc3Ryb2tlLXdpZHRoPSIwLjQiIGZpbHRlcj0idXJsKCNzb2Z0U2hhZG93KSI+CiAgICDZitmI2YUg2KfZhNio2YrYptipINin2YTYudin2YTZhdmKCiAgPC90ZXh0Pgo8L3N2Zz4=" }, // يوم البيئة العالمي
     33: { bg: "", overlay: "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iY2hpbGRKb3kiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjRkY1RTYyIi8+IDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI0ZGOTk2NiIvPiAKICAgIDwvbGluZWFyR3JhZGllbnQ+CgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJ0ZXh0R3JhZCIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjRkY1RTYyIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI0U5MUU2MyIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KCiAgICA8ZmlsdGVyIGlkPSJzb2Z0U2hhZG93Ij4KICAgICAgPGZlRHJvcFNoYWRvdyBkeD0iMS4yIiBkeT0iMS41IiBzdGREZXZpYXRpb249IjEiIGZsb29kLWNvbG9yPSIjMDAwIiBmbG9vZC1vcGFjaXR5PSIwLjMiLz4KICAgIDwvZmlsdGVyPgoKICAgIDxnIGlkPSJjaGlsZEljb24iPgogICAgICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxMiIgZmlsbD0idXJsKCNjaGlsZEpveSkiLz4KICAgICAgPHBhdGggZD0iTTIwIDMyIFEyMiAzOCAyMCA0NSIgc3Ryb2tlPSIjRTkxRTYzIiBzdHJva2Utd2lkdGg9IjEuNSIgZmlsbD0ibm9uZSIvPgogICAgPC9nPgogIDwvZGVmcz4KCiAgPHVzZSBocmVmPSIjY2hpbGRJY29uIiB4PSItNSIgeT0iMzAiIGZpbHRlcj0idXJsKCNzb2Z0U2hhZG93KSIgdHJhbnNmb3JtPSJzY2FsZSgxLjIpIi8+CiAgPHVzZSBocmVmPSIjY2hpbGRJY29uIiB4PSIxMzUiIHk9IjMwIiBmaWx0ZXI9InVybCgjc29mdFNoYWRvdykiIHRyYW5zZm9ybT0ic2NhbGUoMS4yKSIvPgogIAogIDx0ZXh0IHg9IjEwMCIgeT0iMTg4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSJ1cmwoI3RleHRHcmFkKSIgc3Ryb2tlPSIjQzIxODVCIiBzdHJva2Utd2lkdGg9IjAuNCIgZmlsdGVyPSJ1cmwoI3NvZnRTaGFkb3cpIj4KICAgINmK2YjZhSDYp9mE2LfZgdmEINin2YTYudin2YTZhdmKCiAgPC90ZXh0Pgo8L3N2Zz4=" }, // يوم الطفل العالمي
     34: { bg: "", overlay: "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0idGVjaEJsdWUiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMzQ5OGRiIi8+IAogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMyYzNlNTAiLz4gCiAgICA8L2xpbmVhckdyYWRpZW50PgoKICAgIDxsaW5lYXJHcmFkaWVudCBpZD0idGV4dEdyYWQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzI5ODBiOSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxYTUyNzYiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CgogICAgPGZpbHRlciBpZD0ic29mdFNoYWRvdyI+CiAgICAgIDxmZURyb3BTaGFkb3cgZHg9IjEuMiIgZHk9IjEuNSIgc3RkRGV2aWF0aW9uPSIxIiBmbG9vZC1jb2xvcj0iIzAwMCIgZmxvb2Qtb3BhY2l0eT0iMC40Ii8+CiAgICA8L2ZpbHRlcj4KCiAgICA8ZyBpZD0ieW91dGhHZWFyIj4KICAgICAgPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iOCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ1cmwoI3RlY2hCbHVlKSIgc3Ryb2tlLXdpZHRoPSI0IiBzdHJva2UtZGFzaGFycmF5PSI0LDIiLz4KICAgICAgPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMyIgZmlsbD0idXJsKCN0ZWNoQmx1ZSkiLz4KICAgIDwvZz4KICA8L2RlZnM+CgogIDx1c2UgaHJlZj0iI3lvdXRoR2VhciIgeD0iLTUiIHk9IjMwIiBmaWx0ZXI9InVybCgjc29mdFNoYWRvdykiIHRyYW5zZm9ybT0ic2NhbGUoMS4zKSIvPgogIDx1c2UgaHJlZj0iI3lvdXRoR2VhciIgeD0iMTIyIiB5PSIzMCIgZmlsdGVyPSJ1cmwoI3NvZnRTaGFkb3cpIiB0cmFuc2Zvcm09InNjYWxlKDEuMykiLz4KICAKICA8dGV4dCB4PSIxMDAiIHk9IjE4OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjIyIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0idXJsKCN0ZXh0R3JhZCkiIHN0cm9rZT0iIzFhNTI3NiIgc3Ryb2tlLXdpZHRoPSIwLjMiIGZpbHRlcj0idXJsKCNzb2Z0U2hhZG93KSI+CiAgICDZitmI2YUg2KfZhNi02KjYp9ioINin2YTYudin2YTZhdmKCiAgPC90ZXh0Pgo8L3N2Zz4=" }, // يوم الشباب العالمي
+    35: { bg: "", overlay: "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZWFzdGVyR3JhZCIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNmZjlhOWUiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjZmFkMGM0Ii8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogICAgCiAgICA8bGluZWFyR3JhZGllbnQgaWQ9Im5ld1RleHRHcmFkIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjAlIiB5Mj0iMTAwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNmZjlhOWUiLz4gPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjZjA5MzJiIi8+IDwvbGluZWFyR3JhZGllbnQ+CiAgICAKICAgIDxmaWx0ZXIgaWQ9InNvZnRTaGFkb3ciPgogICAgICA8ZmVEcm9wU2hhZG93IGR4PSIxLjIiIGR5PSIxLjUiIHN0ZERldmlhdGlvbj0iMSIgZmxvb2QtY29sb3I9IiMwMDAiIGZsb29kLW9wYWNpdHk9IjAuNCIvPgogICAgPC9maWx0ZXI+CiAgICA8ZyBpZD0iZWFzdGVyRWdnIj4KICAgICAgPHBhdGggZD0iTTIwLDEwIEMxMCwxMCA1LDIwIDUsMzAgQzUsNDUgMjAsNTUgMjAsNTUgQzIwLDU1IDM1LDQ1IDM1LDMwIEMzNSwyMCAzMCwxMCAyMCwxMCBaIiBmaWxsPSJ1cmwoI2Vhc3RlckdyYWQpIiBzdHJva2U9IiNlZTljYTciIHN0cm9rZS13aWR0aD0iMSIvPgogICAgICA8cGF0aCBkPSJNMTAsMzAgUTIwLDI1IDMwLDMwIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjEiIHN0cm9rZS1kYXNoYXJyYXk9IjMsMSIvPgogICAgICA8cGF0aCBkPSJNMTAsMzggUTIwLDMzIDMwLDM4IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjEiIHN0cm9rZS1kYXNoYXJyYXk9IjMsMSIvPgogICAgPC9nPgogIDwvZGVmcz4KICA8dXNlIGhyZWY9IiNlYXN0ZXJFZ2ciIHg9IjE1IiB5PSIzMCIgZmlsdGVyPSJ1cmwoI3NvZnRTaGFkb3cpIi8+CiAgPHVzZSBocmVmPSIjZWFzdGVyRWdnIiB4PSIxNDUiIHk9IjMwIiBmaWx0ZXI9InVybCgjc29mdFNoYWRvdykiLz4KICAKICA8dGV4dCB4PSIxMDAiIHk9IjE4OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjIyIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0idXJsKCNuZXdUZXh0R3JhZCkiIHN0cm9rZT0iI2IzMzkzOSIgc3Ryb2tlLXdpZHRoPSIwLjMiIGZpbHRlcj0idXJsKCNzb2Z0U2hhZG93KSI+CiAgICAg2LnZitivINin2YTZgdi12K0KICA8L3RleHQ+Cjwvc3ZnPg==" }, //عيد الفصح
     generic: { overlay: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScyNCcgaGVpZ2h0PScyNCc+PHBvbHlnb24gcG9pbnRzPSIxMiwyIDE1LDkgMjIsOSAxNywxNCAxOCwyMSAxMiwxNyA2LDIxIDcsMTQgMiw5IDksOSIgZmlsbD0iZ29sZCIvPjwvc3ZnPg==" }
 };
 
@@ -500,7 +502,7 @@ window.autoDateDetect = window.autoDateDetect ?? (localStorage.getItem('autoDate
     };
     
     var linkConfig = {
-        btn1: '/more', btn2: '/search', btn3: '/reels', btn4: '/home'
+        btn1: '/more', btn2: '/search', btn3: '/reels', btn4: '/'
     };
 
     var navbar = document.getElementById("navbar31");
