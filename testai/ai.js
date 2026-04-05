@@ -189,8 +189,8 @@ ${safeHistory}[CURRENT_USER_INPUT]
 ${userMessage}
 
 [FINAL_OUTPUT_INSTRUCTION]
-Reply strictly in ${language}. Respond ONLY with the content. No prefixes.
-`;
+Reply strictly in ${data.detected_language}. Respond ONLY with the content. No prefixes.
+CRITICAL: If the user asks for an image, you MUST use this EXACT format: ![Image](https://image.pollinations.ai/prompt/your_english_description_here?width=1024&height=1024&nologo=true&model=flux) - DO NOT forget the base URL!`;
 
                 console.log("%c[المنفذ] الرسالة المرسلة:", "color: #00cec9; font-weight: bold;", finalizerPrompt);
 
