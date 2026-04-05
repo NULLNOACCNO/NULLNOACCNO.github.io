@@ -205,23 +205,39 @@ CRITICAL: If the user asks for an image, you MUST use this EXACT format: ![Image
                 // ------------------------------------
                 // معالجة الصور والروابط (مع كسر الكاش)
                 // ------------------------------------
+                // --- استخراج الصور ومعالجتها ---
                 let msgType = "text";
                 let fileUrl = null;
                 let displayContent = finalReply;
 
-                const imgRegex = /(?:!\[.*?\]\((https?:\/\/[^\s)]+)\))|(https?:\/\/image\.pollinations\.ai[^\s)]+)/i;
-                const match = finalReply.match(imgRegex);
+                // نبحث عن أي صيغة ماركدون للصورة حتى لو نسي الذكاء الصناعي الرابط الأساسي
+                const mdImageRegex = /!\[.*?\]\((.*?)\)/i;
+                const directUrlRegex = /(https?:\/\/image\.pollinations\.ai[^\s)]+)/i;
+
+                let match = finalReply.match(mdImageRegex);
+                let rawUrl = null;
 
                 if (match) {
+                    rawUrl = match[1];
+                    // إذا كان الذكاء الصناعي غبياً ونسي الرابط الأساسي، نقوم بتركيبه نحن برمجياً بالقوة!
+                    if (!rawUrl.startsWith('http')) {
+                        rawUrl = 'https://image.pollinations.ai/prompt/' + encodeURIComponent(rawUrl.trim()) + '?width=1024&height=1024&nologo=true&model=flux';
+                    }
+                    displayContent = finalReply.replace(match[0], '').trim();
+                } else {
+                    match = finalReply.match(directUrlRegex);
+                    if (match) {
+                        rawUrl = match[1];
+                        displayContent = finalReply.replace(match[0], '').trim();
+                    }
+                }
+
+                if (rawUrl) {
                     msgType = "image";
-                    fileUrl = match[1] || match[2];
-                    
-                    // إضافة seed عشوائي لتجاوز مشكلة الكاش (تكرار نفس الصورة)
-                    if (fileUrl && fileUrl.includes('pollinations.ai')) {
+                    fileUrl = rawUrl;
+                    if (fileUrl.includes('pollinations.ai')) {
                         fileUrl += (fileUrl.includes('?') ? '&' : '?') + 'seed=' + Date.now();
                     }
-                    
-                    displayContent = finalReply.replace(match[0], '').trim(); // إزالة رابط الصورة من النص
                 }
 
                 // ------------------------------------
