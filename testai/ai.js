@@ -103,7 +103,7 @@
                 const currentTime = this.getCurrentTime();
 
                 // ------------------------------------
-                // مرحلة التحليل (Analyzer) كما طلبتها
+                // مرحلة التحليل (Analyzer) 
                 // ------------------------------------
                 const analyzerPrompt = `
         ROLE: System Intent Analyzer (JSON Output Engine).
@@ -170,10 +170,9 @@
                 const deviceLang = (navigator.languages && navigator.languages.length > 0) ? navigator.languages[0].slice(0, 2) : navigator.language.slice(0, 2);        
 
                 // ------------------------------------
-                // مرحلة التنفيذ (Finalizer) كما طلبتها
+                // مرحلة التنفيذ (Finalizer)
                 // ------------------------------------
-                const finalizerPrompt = `
- [SYSTEM_CONTEXT]
+                const finalizerPrompt = `[SYSTEM_CONTEXT]
  - Time: ${timePayload}
  - Device Language: ${deviceLang}
  - User Locale: ${language}
@@ -182,11 +181,11 @@
  - You are MESTORYS AI from SOPERS 2077 (A variant of HACERYOUDIE AI).
  ${combinedRules}
 
-[CONVERSATION_HISTORY]
-${safeHistory}
+[LONG_TERM_MEMORY_SUMMARY]
+${data.history_summary}
 
-[CONTEXT_NOTE]
-${data.history_summary}[CURRENT_USER_INPUT]
+[RECENT_CONVERSATION_HISTORY]
+${safeHistory}[CURRENT_USER_INPUT]
 ${userMessage}
 
 [FINAL_OUTPUT_INSTRUCTION]
@@ -204,7 +203,7 @@ Reply strictly in ${language}. Respond ONLY with the content. No prefixes.
                 console.log("%c[المنفذ] الرسالة المستلمة:", "color: #fd79a8; font-weight: bold;", finalReply);
 
                 // ------------------------------------
-                // معالجة الصور والروابط
+                // معالجة الصور والروابط (مع كسر الكاش)
                 // ------------------------------------
                 let msgType = "text";
                 let fileUrl = null;
@@ -216,6 +215,12 @@ Reply strictly in ${language}. Respond ONLY with the content. No prefixes.
                 if (match) {
                     msgType = "image";
                     fileUrl = match[1] || match[2];
+                    
+                    // إضافة seed عشوائي لتجاوز مشكلة الكاش (تكرار نفس الصورة)
+                    if (fileUrl && fileUrl.includes('pollinations.ai')) {
+                        fileUrl += (fileUrl.includes('?') ? '&' : '?') + 'seed=' + Date.now();
+                    }
+                    
                     displayContent = finalReply.replace(match[0], '').trim(); // إزالة رابط الصورة من النص
                 }
 
@@ -226,7 +231,7 @@ Reply strictly in ${language}. Respond ONLY with the content. No prefixes.
                     await client.from("messages").insert({
                         chat_id: chatId,
                         user_id: this.aiId,
-                        content: displayContent || "تم توليد الصورة",
+                        content: displayContent,
                         type: msgType,
                         file_url: fileUrl
                     });
