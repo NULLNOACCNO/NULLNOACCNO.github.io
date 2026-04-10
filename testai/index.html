@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+ <script> if (window.location.pathname.endsWith('/') && window.location.pathname !== '/') {var newUrl = window.location.pathname.slice(0, -1) + window.location.search + window.location.hash; window.history.replaceState(null, document.title, newUrl); }</script>
+<script>(function(){const k='sb-mrynkcevthcixgvmdndi-auth-token',v='user_verified';if(localStorage.getItem(k)){if(localStorage.getItem(v)==='true')window.location.replace('/');fetch('https://mrynkcevthcixgvmdndi.supabase.co/rest/v1/profiles?select=id',{headers:{'apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1yeW5rY2V2dGhjaXhndm1kbmRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5Mzk1NzksImV4cCI6MjA3MTUxNTU3OX0.5Fv2mprNFWNfwtqhX9lZuCDZ5weazFK80YLuJiX6Ejg','Authorization':`Bearer ${JSON.parse(localStorage.getItem(k)).access_token}`}}).then(r=>r.json()).then(d=>{if(d&&d.length>0){localStorage.setItem(v,'true');if(window.location.pathname!=='/')window.location.replace('/');}else{localStorage.removeItem(k);localStorage.removeItem(v);location.reload();}}).catch(()=>{});}})();</script>
+<script src="/afqhyq6171yqfyagqg1761oja19qugaq/ExtensionBlocker.html.js"></script>
+<script src="/afqhyq6171yqfyagqg1761oja19qugaq/navbarIconData.js"></script>
+ <script src="/afqhyq6171yqfyagqg1761oja19qugaq/navbar.js"></script>
+<script>document.documentElement.style.overscrollBehaviorY='none';document.body.style.overscrollBehaviorY='none';window.addEventListener('touchmove',e=>{if(window.scrollY===0&&e.touches[0].clientY>(typeof pullStartY!=='undefined'?pullStartY:0))e.preventDefault()},{passive:!1});</script>
+  <title>WELCOME TO MESTORYS</title>
+      <meta name="theme-color" content="#2196f3">
+    <link rel="icon" type="image/png" href="/website.png">
+    <meta name="description" content="سجل دخولك الآن إلى MESTORYS لتتمتع بكافة الميزات الحصرية. انضم إلى مجتمع haceryoudie الترفيهي.">
+<meta name="keywords" content="MESTORYS, تسجيل دخول, اشتراك, انضمام, login, auth, haceryoudie">
+<meta property="og:title" content="انضم إلى MESTORYS">
+<meta property="og:description" content="سجل دخولك الآن لتصل إلى محتواك المفضل.">
+<meta name="robots" content="noindex, follow">
+<script>const m={name:"MESTORYS",short_name:"MESTORYS",description:"منصة التواصل الاجتماعي المتكاملة لمشاركة اللحظات، بناء المجتمعات، والتواصل الحر مع العالم في بيئة ذكية وآمنة.",icons:[{src:"/website.png",sizes:"128x128",type:"image/png"},{src:"/website.png",sizes:"192x192",type:"image/png"},{src:"/website.png",sizes:"512x512",type:"image/png"}],screenshots:[{src:"/mobile-home.png",sizes:"1080x1920",type:"image/png",form_factor:"narrow",label:"واجهة التفاعل"},{src:"/mobile-chat.png",sizes:"1080x1920",type:"image/png",form_factor:"narrow",label:"المراسلة الفورية"},{src:"/desktop-feed.png",sizes:"1920x1080",type:"image/png",form_factor:"wide",label:"استعراض المنشورات"},{src:"/desktop-profile.png",sizes:"1920x1080",type:"image/png",form_factor:"wide",label:"الملف الشخصي"}],start_url:"/",display:"standalone",background_color:"#ffffff",theme_color:"#ffffff"},l=document.createElement('link');l.rel='manifest';l.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(m));document.head.appendChild(l);</script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root { --primary-color: #0d6efd; --secondary-color: #42b72a; --background-gray: #f0f2f5; --white: #fff; --border-color: #ced4da; }
+    body { font-family: 'Cairo', sans-serif; background: linear-gradient(135deg, #e0eafc, #cfdef3); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; overflow: hidden; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; text-align: right; }
+    .form-wrapper { width: 100%; max-width: 420px; position: relative; min-height: 620px; padding: 0 1rem; box-sizing: border-box;}
+    .form-container { background-color: var(--white); width: 100%; padding: 2rem; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); position: absolute; top: 0; left: 0; box-sizing: border-box; transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out; }
+    .form-container { transform: translateX(-100%); opacity: 0; pointer-events: none; }
+    .form-container.active { transform: translateX(0); opacity: 1; pointer-events: auto; }
+    .form-container.exit-right { transform: translateX(100%); opacity: 0; }
+    h2 { text-align: center; color: #1c1e21; margin-bottom: 2rem; font-weight: 700; }
+    .input-group { margin-bottom: 1.25rem; position: relative; }
+    .input-group input, .input-group select { width: 100%; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1rem; box-sizing: border-box; transition: all 0.2s; text-align: right; }
+    .input-group input:focus, .input-group select:focus { border-color: var(--primary-color); outline: none; box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25); }
+    .password-toggle { position: absolute; top: 50%; transform: translateY(-50%); left: 16px; cursor: pointer; color: #6c757d; }
+    .avatar-upload { text-align: center; margin-bottom: 1rem; }
+    .avatar-upload img { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; border: 3px solid var(--border-color); cursor: pointer; transition: transform 0.2s; background-color: #ffffff; }
+    .avatar-upload img:hover { transform: scale(1.05); }
+    .button-group { display: flex; justify-content: space-between; margin-top: 2rem; gap: 1rem; flex-direction: row-reverse; }
+    button { background-color: var(--primary-color); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.2s; width: 100%; }
+    button:hover { background-color: #0b5ed7; transform: translateY(-2px); }
+    button:disabled { background-color: #6c757d; cursor: not-allowed; transform: none; }
+    button.secondary { background-color: #e9ecef; color: #495057; }
+    button.secondary:hover { background-color: #dee2e6; }
+    .link { text-align: center; margin-top: 1.5rem; }
+    .link a { color: var(--primary-color); text-decoration: none; font-weight: 600; cursor: pointer; }
+    .hidden { display: none !important; }
+    .notification { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: #333; color: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 1000; opacity: 0; transform: translateY(20px); transition: opacity 0.3s, transform 0.3s; }
+    .notification.show { opacity: 1; transform: translateY(0); }
+    .notification.success { background-color: var(--secondary-color); }
+    .notification.error { background-color: #dc3545; }
+    @media (max-width: 480px) {
+        .form-wrapper { padding: 0; } .form-container { padding: 1.5rem; } h2 { font-size: 1.5rem; }
+        .avatar-upload img { width: 120px; height: 120px; }
+    }
+  </style>
+</head>
+<body>
+	<style>.old-browser-warning{font-size:20px;color:red;position:fixed;top:0;left:0;width:100%;height:100%;display:none;justify-content:center;align-items:center;z-index:9999;background-color:white;padding:20px;border:2px solid red;box-sizing:border-box;text-align:center}.main-content{display:block}</style><div class="old-browser-warning" id="oldBrowserWarning"></div><div class="main-content" id="mainContent"></div><script>function isOldBrowser(){var e=!1;try{var t=new URL("https://example.com");"https:"!==t.protocol&&(e=!0)}catch(n){e=!0}return e}const texts1ol={ar:"انت تستخدم الان متصفح قديم خاص لاجهزة الجوال القديمة ونحن نعرف شعورك لذلك لم يعد باستطاعتك مشاهدة الفيديوهات ونتمنى لو كنت تمتلك جهازا افضل",en:"You are now using an old browser for old mobile devices and we know how you feel so you can no longer watch videos and we wish you had a better device"},userLang1ol=navigator.language.substring(0,2),displayText1ol=texts1ol[userLang1ol]||texts1ol.en;isOldBrowser()?(document.getElementById("oldBrowserWarning").style.display="flex",document.getElementById("mainContent").style.display="none",document.getElementById("oldBrowserWarning").innerText=displayText1ol):(document.getElementById("oldBrowserWarning").style.display="none",document.getElementById("mainContent").style.display="block");</script>
+
+  <div id="notification-area"></div>
+  <div class="form-wrapper">
+    <div id="step-initial" class="form-container active">
+        <h2>MESTORYS مرحباً بك في</h2>
+        <div class="input-group"><input type="email" id="login-email" placeholder="البريد الإلكتروني"></div>
+        <div class="input-group">
+            <input type="password" id="login-password" placeholder="كلمة المرور">
+            <span class="password-toggle" onclick="authFlow.togglePasswordVisibility('login-password', this)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </span>
+        </div>
+        <button onclick="auth.login(this)">تسجيل الدخول</button>
+        <div class="link">
+            <a onclick="authFlow.showStep('step-register-1'); return false;">ليس لديك حساب؟ إنشاء حساب جديد</a>
+        </div>
+    </div>
+    <div id="step-register-1" class="form-container">
+        <h2>إنشاء حساب (1/5)</h2>
+        <div class="input-group"><input type="email" id="register-email" placeholder="البريد الإلكتروني"></div>
+        <div class="input-group">
+            <input type="password" id="register-password" placeholder="كلمة المرور (6 أحرف على الأقل)">
+            <span class="password-toggle" onclick="authFlow.togglePasswordVisibility('register-password', this)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </span>
+        </div>
+        <div class="button-group"><button onclick="authFlow.showStep('step-initial', true)" class="secondary">الخلف</button><button onclick="authFlow.validateStep1()">التالي</button></div>
+    </div>
+    <div id="step-register-2" class="form-container">
+        <h2>ما هو اسمك؟ (2/5)</h2>
+        <div class="input-group"><input type="text" id="register-firstname" placeholder="الاسم الأول (مطلوب)"></div>
+        <div class="input-group"><input type="text" id="register-lastname" placeholder="اسم العائلة (اختياري)"></div>
+        <div class="button-group"><button onclick="authFlow.showStep('step-register-1', true)" class="secondary">الخلف</button><button onclick="authFlow.validateStep2()">التالي</button></div>
+    </div>
+    <div id="step-register-3" class="form-container">
+        <h2>ما هو تاريخ ميلادك؟ (3/5)</h2>
+        <div class="input-group"><input type="date" id="register-birthdate"></div>
+        <div class="button-group"><button onclick="authFlow.showStep('step-register-2', true)" class="secondary">الخلف</button><button onclick="authFlow.validateStep3()">التالي</button></div>
+    </div>
+    <div id="step-register-4" class="form-container">
+        <h2>ما هو جنسك؟ (4/5)</h2>
+        <div class="input-group">
+            <select id="register-gender"><option value="" disabled selected>اختر الجنس</option><option value="male">ذكر</option><option value="female">أنثى</option><option value="prefer_not_to_say">أفضل عدم القول</option></select>
+        </div>
+        <div class="button-group"><button onclick="authFlow.showStep('step-register-3', true)" class="secondary">الخلف</button><button onclick="authFlow.validateStep4()">التالي</button></div>
+    </div>
+    <div id="step-register-5" class="form-container">
+        <h2>اختر صورة ملفك الشخصي (5/5)</h2>
+        <div class="avatar-upload">
+            <label for="register-avatar-input"><img id="avatar-preview" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzQwIiBoZWlnaHQ9IjM0MCIgdmlld0JveD0iMCAwIDM0MCAzNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojRTlFOUU5OyIgLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNEMUQxRDE7IiAvPjwvbGluZWFyR3JhZGllbnQ+PGZpbHRlciBpZD0ic2hhZG93Ij48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iNCIgc3RkRGV2aWF0aW9uPSI1IiBmbG9vZC1jb2xvcj0iIzAwMDAwMCIgZmxvb2Qtb3BhY2l0eT0iMC4xNSIvPjwvZmlsdGVyPjwvZGVmcz48ZyBmaWx0ZXI9InVybCgjc2hhZG93KSI+PGNpcmNsZSBjeD0iMTcwIiBjeT0iMTQ1IiByPSI3NSIgZmlsbD0idXJsKCNncmFkKSIgLz48cGF0aCBkPSJNIDM1IDM0MCBDIDYwIDI5MCwgMTAwIDI0MCwgMTcwIDI0MCBTIDI4MCAyOTAsIDMwNSAzNDAgWiIgZmlsbD0idXJsKCNncmFkKSIgLz48L2c+PC9zdmc+" alt="Avatar"></label>
+            <input type="file" id="register-avatar-input" class="hidden" accept="image/*" onchange="authFlow.previewAvatar(event)">
+        </div>
+        <div class="button-group"><button onclick="authFlow.showStep('step-register-4', true)" class="secondary">الخلف</button><button onclick="auth.register(this)" style="background-color:var(--secondary-color);">إنهاء</button></div>
+    </div>
+  </div>
+  
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({pageLanguage: 'ar', includedLanguages: 'en,fr,ar'}, 'google_translate_element');
+    }
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+  
+<script>
+	
+	
+	
+    const SUPABASE_URL = 'https://mrynkcevthcixgvmdndi.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1yeW5rY2V2dGhjaXhndm1kbmRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5Mzk1NzksImV4cCI6MjA3MTUxNTU3OX0.5Fv2mprNFWNfwtqhX9lZuCDZ5weazFK80YLuJiX6Ejg';
+    const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    
+    async function authGuard() {
+        try {
+            const { data: { session }, error } = await client.auth.getSession();
+            if (error) throw error;
+            if (session) {
+                const { error: profileError } = await client.from('profiles').select('id').eq('id', session.user.id).single();
+                if (profileError) throw profileError;
+                window.location.replace('/'); 
+            }
+        } catch (error) {
+            console.error("فشل التحقق من الجلسة أو الملف الشخصي:", error);
+            await client.auth.signOut();
+            window.location.reload();
+        }
+    }
+
+    const PROFESSIONAL_AVATAR_SVG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzQwIiBoZWlnaHQ9IjM0MCIgdmlld0JveD0iMCAwIDM0MCAzNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojRTlFOUU5OyIgLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNEMUQxRDE7IiAvPjwvbGluZWFyR3JhZGllbnQ+PGZpbHRlciBpZD0ic2hhZG93Ij48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iNCIgc3RkRGV2aWF0aW9uPSI1IiBmbG9vZC1jb2xvcj0iIzAwMDAwMCIgZmxvb2Qtb3BhY2l0eT0iMC4xNSIvPjwvZmlsdGVyPjwvZGVmcz48ZyBmaWx0ZXI9InVybCgjc2hhZG93KSI+PGNpcmNsZSBjeD0iMTcwIiBjeT0iMTQ1IiByPSI3NSIgZmlsbD0idXJsKCNncmFkKSIgLz48cGF0aCBkPSJNIDM1IDM0MCBDIDYwIDI5MCwgMTAwIDI0MCwgMTcwIDI0MCBTIDI4MCAyOTAsIDMwNSAzNDAgWiIgZmlsbD0idXJsKCNncmFkKSIgLz48L2c+PC9zdmc+';
+    
+    const ui = {
+        showNotification: (m, t = 'error') => { const c = document.getElementById('notification-area'); const n = document.createElement('div'); n.className = `notification ${t}`; n.textContent = m; c.appendChild(n); setTimeout(() => n.classList.add('show'), 10); setTimeout(() => { n.classList.remove('show'); setTimeout(() => n.remove(), 300); }, 4000); }
+    };
+
+    const authFlow = {
+        currentStepId: 'step-initial',
+        showStep: (id, back = false) => { const cs = document.getElementById(authFlow.currentStepId), ns = document.getElementById(id); if (!cs || !ns || cs === ns) return; if(back){ ns.classList.remove('exit-right'); cs.classList.remove('active'); ns.classList.add('active'); } else { cs.classList.add('exit-right'); cs.classList.remove('active'); ns.classList.add('active'); } authFlow.currentStepId = id; },
+        togglePasswordVisibility: (id, el) => { const i = document.getElementById(id), t = i.getAttribute('type') === 'password' ? 'text' : 'password'; i.setAttribute('type', t); el.innerHTML = t === 'password' ? `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>` : `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`; },
+        previewAvatar: (e) => { const f = e.target.files[0]; if (f) { const r = new FileReader(); r.onload = e => { document.getElementById('avatar-preview').src = e.target.result; }; r.readAsDataURL(f); } },
+        createInitialsSvg: (i) => { const c = ["#f44336", "#e91e63", "#9c27b0", "#673ab7", "#3f51b5", "#2196f3", "#03a9f4", "#00bcd4", "#009688", "#4caf50", "#8bc3a", "#ffc107", "#ff9800", "#ff5722"], cl = c[Math.floor(Math.random() * c.length)], fS = i.length > 1 ? '80' : '100'; return `data:image/svg+xml;base64,${btoa(`<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="100" fill="${cl}" /><text x="50%" y="50%" dominant-baseline="central" text-anchor="middle" font-family="Arial, sans-serif" font-size="${fS}px" font-weight="bold" fill="#ffffff">${i}</text></svg>`)}`; },
+        updateDefaultAvatar: () => { if (document.getElementById('register-avatar-input').files.length > 0) return; const fN = document.getElementById('register-firstname').value.trim(), lN = document.getElementById('register-lastname').value.trim(), isA = /^[a-zA-Z\s]*$/; if (isA.test(fN) && isA.test(lN) && (fN || lN)) { let i = (fN ? fN.charAt(0) : '') + (lN ? lN.charAt(0) : ''); document.getElementById('avatar-preview').src = authFlow.createInitialsSvg(i.toUpperCase()); } else { document.getElementById('avatar-preview').src = PROFESSIONAL_AVATAR_SVG; } },
+        validateStep1: () => { const e = document.getElementById('register-email').value.trim(), p = document.getElementById('register-password').value.trim(); if (!e.toLowerCase().endsWith('@gmail.com')) return ui.showNotification('غير مسموح ببريد غير @gmail.com'); if (p.length < 6) return ui.showNotification('يجب أن تكون كلمة المرور 6 أحرف على الأقل.'); authFlow.showStep('step-register-2'); },
+        validateStep2: () => { const f = document.getElementById('register-firstname').value.trim(); if (!f) return ui.showNotification('الاسم الأول مطلوب.'); authFlow.showStep('step-register-3'); },
+        validateStep3: () => { const b = document.getElementById('register-birthdate').value; if (!b) return ui.showNotification('تاريخ الميلاد مطلوب.'); if (b > new Date().toISOString().split('T')[0]) return ui.showNotification('تاريخ الميلاد غير صالح، لا يمكن اختيار تاريخ في المستقبل.'); authFlow.showStep('step-register-4'); },
+        validateStep4: () => { const g = document.getElementById('register-gender').value; if (!g) return ui.showNotification('الرجاء اختيار الجنس.'); authFlow.showStep('step-register-5'); }
+    };
+
+    const actions = {
+        generateUniqueUsername: async (baseName) => {
+            let username = baseName.toLowerCase().trim().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+
+            if (!username) {
+                const randomNumber = Math.floor(10000000 + Math.random() * 90000000);
+                return `user-${randomNumber}`;
+            }
+
+            let isAvailable = false;
+            let finalUsername = username;
+            let attempts = 0;
+
+            while (!isAvailable && attempts < 10) {
+                const { data, error } = await client.from('profiles').select('username').eq('username', finalUsername).single();
+                
+                if (error && error.code !== 'PGRST116') {
+                    throw new Error("خطأ أثناء التحقق من اسم المعرف.");
+                }
+
+                if (!data) {
+                    isAvailable = true;
+                } else {
+                    // *** هذا هو الجزء الذي تم تعديله ***
+                    const randomNumber = Math.floor(10000000 + Math.random() * 90000000);
+                    finalUsername = `${username}-${randomNumber}`;
+                    attempts++;
+                }
+            }
+
+            if (!isAvailable) {
+                const randomNumber = Date.now();
+                return `user-${randomNumber}`;
+            }
+            
+            return finalUsername;
+        }
+    };
+
+    const auth = {
+        login: async (btn) => {
+            btn.disabled = true;
+            btn.textContent = 'جارٍ الدخول...';
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value.trim();
+            
+            try {
+                const { data, error } = await client.auth.signInWithPassword({ email, password });
+                if (error) throw error;
+                
+                ui.showNotification("تم تسجيل الدخول بنجاح!", "success");
+                
+                const iframe = document.createElement('iframe');
+                iframe.src = 'https://mestorys.netlify.app/appauth/index.html';
+                iframe.style.display = 'none';
+                document.body.appendChild(iframe);
+                iframe.onload = () => { iframe.contentWindow.postMessage({ action: 'SAVE_SESSION', session: data.session }, '*'); };
+
+                setTimeout(() => { window.location.href = '/'; }, 1500);
+
+            } catch (error) {
+                ui.showNotification("فشل تسجيل الدخول: " + error.message, "error");
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'تسجيل الدخول';
+            }
+        },
+        register: async (btn) => {
+            btn.disabled = true;
+            btn.textContent = 'جارٍ الإنشاء...';
+            const email = document.getElementById('register-email').value.trim();
+            const password = document.getElementById('register-password').value.trim();
+            const firstName = document.getElementById('register-firstname').value.trim();
+            const lastName = document.getElementById('register-lastname').value.trim();
+            const birthDate = document.getElementById('register-birthdate').value;
+            const gender = document.getElementById('register-gender').value;
+            const avatarFile = document.getElementById('register-avatar-input').files[0];
+            
+            try {
+                const { data: { user }, error: signUpError } = await client.auth.signUp({ email, password });
+                if (signUpError) throw signUpError;
+                
+                let avatarUrl = document.getElementById('avatar-preview').src;
+                let avatarPath = null;
+                if (avatarFile) {
+                    const fileExt = avatarFile.name.split('.').pop();
+                    const filePath = `${user.id}/avatar.${fileExt}`;
+                    const { error: uploadError } = await client.storage.from('avatars').upload(filePath, avatarFile, { upsert: true });
+                    if (uploadError) throw uploadError;
+                    const { data: urlData } = client.storage.from('avatars').getPublicUrl(filePath);
+                    avatarUrl = urlData.publicUrl;
+                    avatarPath = filePath;
+                }
+
+                const uniqueUsername = await actions.generateUniqueUsername(firstName);
+
+                const { error: updateError } = await client.from('profiles').update({
+                    username: uniqueUsername,
+                    avatar_url: avatarUrl,
+                    avatar_path: avatarPath,
+                    first_name: firstName,
+                    last_name: lastName,
+                    birth_date: birthDate,
+                    gender: gender,
+                }).eq('id', user.id);
+                
+                if (updateError) throw updateError;
+                
+                ui.showNotification("تم إنشاء الحساب بنجاح!", "success");
+
+                const { data: sessionData } = await client.auth.getSession();
+                if(sessionData && sessionData.session) {
+                    const iframe = document.createElement('iframe');
+                    iframe.src = 'https://mestorys.netlify.app/appauth/index.html';
+                    iframe.style.display = 'none';
+                    document.body.appendChild(iframe);
+                    iframe.onload = () => { iframe.contentWindow.postMessage({ action: 'SAVE_SESSION', session: sessionData.session }, '*'); };
+                }
+
+                setTimeout(() => { window.location.href = '/'; }, 2000);
+
+            } catch (error) {
+                ui.showNotification(error.message, "error");
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'إنهاء';
+            }
+        }
+    };
+  
+    document.getElementById('register-firstname').addEventListener('input', authFlow.updateDefaultAvatar);
+    document.getElementById('register-lastname').addEventListener('input', authFlow.updateDefaultAvatar);
+    
+    authGuard();
+</script>
+</body>
+</html>
